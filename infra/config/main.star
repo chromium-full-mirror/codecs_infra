@@ -69,7 +69,10 @@ luci.project(
                 acl.SCHEDULER_OWNER,
                 acl.CQ_COMMITTER,
             ],
-            groups = "project-open-codecs-committers",
+            groups = [
+                "project-open-codecs-committers",
+                "project-open-codecs-ci-task-accounts",
+            ],
         ),
         # Ability to launch CQ dry runs.
         acl.entry(
@@ -89,7 +92,17 @@ luci.logdog(gs_bucket = "chromium-luci-logdog")
 luci.cq(status_host = "chromium-cq-status.appspot.com")
 
 # Bucket with post-submit builders.
-luci.bucket(name = "ci")
+luci.bucket(
+    name = "ci",
+    acls = [
+        # Allow launching ci directly (in addition to doing it through CQ).
+        acl.entry(
+            roles = [acl.BUILDBUCKET_TRIGGERER, acl.SCHEDULER_TRIGGERER],
+            users = ["luci-scheduler@appspot.gserviceaccount.com"],
+            groups = "project-open-codecs-ci-task-accounts",
+        ),
+    ],
+)
 
 # Bucket with pre-submit builders.
 luci.bucket(
@@ -98,7 +111,7 @@ luci.bucket(
         # Allow launching tryjobs directly (in addition to doing it through CQ).
         acl.entry(
             roles = acl.BUILDBUCKET_TRIGGERER,
-            groups = "project-open-codecs-tryjob-access",
+            groups = "project-open-codecs-try-task-accounts",
         ),
     ],
 )
@@ -115,7 +128,7 @@ luci.list_view(name = "Try Builders")
 
 # The CQ group with all pre-submit builders, referenced below.
 luci.cq_group(
-    name = "Main CQ",
+    name = "MainCQ",
     watch = cq.refset(REPO_URL, refs = [REPO_REFS]),
 )
 
@@ -180,7 +193,7 @@ def try_builder(name, *, os, cpu = "x86-64"):
     # Add to the CQ.
     luci.cq_tryjob_verifier(
         builder = "try/" + name,
-        cq_group = "Main CQ",
+        cq_group = "MainCQ",
     )
 
     # And also to the pre-submit builders list.
