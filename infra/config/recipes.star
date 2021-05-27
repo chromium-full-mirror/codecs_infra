@@ -71,7 +71,7 @@ def recipe_bundler(name, repo_specs, triggered_by = None):
             use_bbagent = True,
         ),
         dimensions = {
-            "pool": "luci.open-codecs.ci",
+            "pool": "luci.flex.ci",
             "os": "Ubuntu",
             "cpu": "x86-64",
         },
