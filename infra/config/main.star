@@ -39,7 +39,13 @@ lucicfg.config(
     config_dir = "generated",
     tracked_files = ["*.cfg"],
     fail_on_warnings = True,
-    lint_checks = ["default"],
+    lint_checks = [
+        "default",
+        "-function-docstring",
+        "-function-docstring-args",
+        "-function-docstring-return",
+        "-module-docstring",
+    ],
 )
 
 # Definition of what LUCI micro-services to use and global ACLs that apply to
