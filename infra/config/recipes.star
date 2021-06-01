@@ -97,7 +97,7 @@ def poller(name, repo):
         name = name,
         bucket = "ci",
         repo = repo,
-        refs = [REPO_REFS]
+        refs = [REPO_REFS],
     )
 
 # Create recipe-bundler builder to bundle recipe scripts into cipd packages.
