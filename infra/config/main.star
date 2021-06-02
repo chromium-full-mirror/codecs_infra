@@ -94,7 +94,7 @@ luci.project(
 )
 
 # Required Logdog configuration.
-luci.logdog(gs_bucket = "chromium-luci-logdog")
+luci.logdog(gs_bucket = "open-codecs-luci-logdog")
 luci.cq(status_host = "chromium-cq-status.appspot.com")
 
 # Bucket with post-submit builders.
