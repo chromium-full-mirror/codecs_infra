@@ -100,9 +100,11 @@ def poller(name, repo):
         refs = [REPO_REFS],
     )
 
-# Create recipe-bundler builder to bundle recipe scripts into cipd packages.
-repo_spec = "%(url)s=FETCH_HEAD,%(refs)s" % {"url": REPO_URL, "refs": REPO_REFS}
+# MUST NOT include scheme in prod, otherwise causes mixed content on GWS (due
+# to potentially mixing HTTP and HTTPS).)
+repo_spec = "%(url)s=FETCH_HEAD,%(refs)s" % {"url": REPO_URL.replace("https://", ""), "refs": REPO_REFS}
 
+# Create recipe-bundler builder to bundle recipe scripts into cipd packages.
 recipe_bundler(
     name = "recipe-bundler",
     repo_specs = [
