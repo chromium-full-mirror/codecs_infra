@@ -93,6 +93,10 @@ luci.project(
     ],
 )
 
+luci.milo(
+    logo = "https://storage.googleapis.com/downloads.webmproject.org/media/images/oc-logo-luci.svg",
+)
+
 # Required Logdog configuration.
 luci.logdog(gs_bucket = "open-codecs-luci-logdog")
 luci.cq(status_host = "chromium-cq-status.appspot.com")
