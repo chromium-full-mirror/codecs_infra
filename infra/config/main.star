@@ -22,7 +22,7 @@ lucicfg is distributed as a single self-contained binary as part of
 depot_tools.
 """
 
-# Load from common starlark file
+# Load from common starlark file.
 load(
     "//common.star",
     "RECIPE_BUNDLE",
@@ -31,10 +31,10 @@ load(
     "REPO_URL",
 )
 
-# Required depot_tools
+# Required depot_tools.
 lucicfg.check_version("1.18.4", "Please update depot_tools")
 
-# lucicfg configuration
+# lucicfg configuration.
 lucicfg.config(
     config_dir = "generated",
     tracked_files = ["*.cfg"],
@@ -173,12 +173,12 @@ def ci_builder(name, *, os, category, cpu = "x86-64"):
 
     # Add it to the console as well.
     luci.console_view_entry(
-        builder = "ci/" + name,  # disambiguate by prefixing the bucket name
+        builder = "ci/" + name,  # disambiguate by prefixing the bucket name.
         console_view = "CI Console",
         category = category,
     )
 
-# Define a linux 64 builder
+# Define a linux 64 builder.
 ci_builder("linux", os = "Ubuntu-18", category = "Linux|18")
 
 def try_builder(name, *, os, cpu = "x86-64"):
@@ -216,4 +216,5 @@ def try_builder(name, *, os, cpu = "x86-64"):
 try_builder("linux", os = "Ubuntu-18")
 
 ################################################################################
+exec("presubmit.star")
 exec("recipes.star")

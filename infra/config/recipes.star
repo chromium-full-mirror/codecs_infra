@@ -20,7 +20,7 @@ After modifying this file execute ('lucicfg generate main.star') to regenerate
 the configs.
 """
 
-# Load from common starlark file
+# Load from common starlark file.
 load(
     "//common.star",
     "CIPD_PREFIX",
@@ -101,7 +101,7 @@ def poller(name, repo):
     )
 
 # MUST NOT include scheme in prod, otherwise causes mixed content on GWS (due
-# to potentially mixing HTTP and HTTPS).)
+# to potentially mixing HTTP and HTTPS).
 repo_spec = "%(url)s=FETCH_HEAD,%(refs)s" % {"url": REPO_URL.replace("https://", ""), "refs": REPO_REFS}
 
 # Create recipe-bundler builder to bundle recipe scripts into cipd packages.
