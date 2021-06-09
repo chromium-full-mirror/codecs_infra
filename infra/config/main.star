@@ -178,8 +178,8 @@ def ci_builder(name, *, os, category, cpu = "x86-64"):
         category = category,
     )
 
-# Define a xenial linux 64 builder
-ci_builder("xenial", os = "Ubuntu-16.04", category = "Linux|16.04")
+# Define a linux 64 builder
+ci_builder("linux", os = "Ubuntu-18", category = "Linux|18")
 
 def try_builder(name, *, os, cpu = "x86-64"):
     """Defines a pre-submit builder."""
@@ -212,8 +212,8 @@ def try_builder(name, *, os, cpu = "x86-64"):
         list_view = "Try Builders",
     )
 
-# Define a xenial linux 64 builder
-try_builder("xenial", os = "Ubuntu-16.04")
+# Define a linux 64 builder
+try_builder("linux", os = "Ubuntu-18")
 
 ################################################################################
 exec("recipes.star")
