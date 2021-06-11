@@ -1,1 +1,9 @@
-.recipe_deps
+# Python files
+.recipe_deps/
+*.pyc
+__init__.py
+
+# IDEs
+.idea/
+tags
+
