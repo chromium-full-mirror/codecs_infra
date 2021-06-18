@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Builders supporting recipes ecosystem.
 
 This configuration runs presubmit checks for all files under codecs/infra.
@@ -19,13 +18,23 @@ After modifying this file execute ('lucicfg generate main.star') to regenerate
 the configs.
 """
 
-def presubmit(name, os = "Ubuntu"):
+load("//lib//common.star", "CODECS_INFRA_REPO_URL", "REPO_REFS")
+load("//lib/try_helper.star", "try_helper")
+
+codecs_infra_try_builder = try_helper.setup_builder(
+    prefix = "codecs-infra",
+    repo = CODECS_INFRA_REPO_URL,
+    refs = [REPO_REFS],
+)
+
+def _codecs_infra_patch_check(*, name, dimensions, cq_group, **kwargs):
     luci.builder(
         name = name,
         bucket = "try",
         executable = luci.recipe(
             name = "presubmit",
-            cipd_package = "infra/recipe_bundles/chromium.googlesource.com/chromium/tools/build",
+            cipd_package =
+                "infra/recipe_bundles/chromium.googlesource.com/chromium/tools/build",
             cipd_version = "refs/heads/main",
         ),
         properties = {
@@ -34,19 +43,16 @@ def presubmit(name, os = "Ubuntu"):
                 "timeout_s": 480,
             },
         },
-        service_account = "open-codecs-try-builder@chops-service-accounts.iam.gserviceaccount.com",
-        dimensions = {
-            "os": os,
-            "cpu": "x86-64",
-            "pool": "luci.flex.try",
-        },
+        service_account =
+            "open-codecs-try-builder@chops-service-accounts.iam.gserviceaccount.com",
+        dimensions = dimensions,
         execution_timeout = 10 * time.minute,
     )
 
     # Add to the CQ.
     luci.cq_tryjob_verifier(
         builder = "try/" + name,
-        cq_group = "MainCQ",
+        cq_group = cq_group,
     )
 
     # And also to the pre-submit builders list.
@@ -56,4 +62,7 @@ def presubmit(name, os = "Ubuntu"):
     )
 
 # Create presubmit try builder for codec/infra star files and recipes.
-presubmit(name = "patch-check")
+codecs_infra_try_builder(
+    name = "patch-check",
+    builder_creator = _codecs_infra_patch_check,
+)

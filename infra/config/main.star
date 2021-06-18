@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Open Codecs LUCI configuration project.
 
 Defines the LUCI configs. To update the generated files use
@@ -24,11 +23,9 @@ depot_tools.
 
 # Load from common starlark file.
 load(
-    "//common.star",
-    "RECIPE_BUNDLE",
-    "RECIPE_VERSION",
+    "//lib/common.star",
+    "CODECS_INFRA_REPO_URL",
     "REPO_REFS",
-    "REPO_URL",
 )
 
 # Required depot_tools.
@@ -129,92 +126,13 @@ luci.bucket(
 # The Milo console with all post-submit builders, referenced below.
 luci.console_view(
     name = "CI Console",
-    repo = REPO_URL,
+    repo = CODECS_INFRA_REPO_URL,
     refs = [REPO_REFS],
 )
 
 # The Milo builder list with all pre-submit builders, referenced below.
 luci.list_view(name = "Try Builders")
 
-# The CQ group with all pre-submit builders, referenced below.
-luci.cq_group(
-    name = "MainCQ",
-    watch = cq.refset(REPO_URL, refs = [REPO_REFS]),
-)
-
-# The gitiles poller: a source of commits that trigger CI builders.
-luci.gitiles_poller(
-    name = "open-codecs-poller",
-    bucket = "ci",
-    repo = REPO_URL,
-    refs = [REPO_REFS],
-)
-
-def ci_builder(name, *, os, category, cpu = "x86-64"):
-    """Defines a post-submit builder."""
-    luci.builder(
-        name = name,
-        bucket = "ci",
-        executable = luci.recipe(
-            name = "ci_builder",
-            cipd_package = RECIPE_BUNDLE,
-            cipd_version = RECIPE_VERSION,
-        ),
-        dimensions = {
-            "os": os,
-            "cpu": cpu or "x86-64",
-            "pool": "luci.flex.ci",
-        },
-        service_account = "open-codecs-ci-builder@chops-service-accounts.iam.gserviceaccount.com",
-        execution_timeout = 45 * time.minute,
-        # Run this builder on commits to REPO_URL.
-        triggered_by = ["open-codecs-poller"],
-    )
-
-    # Add it to the console as well.
-    luci.console_view_entry(
-        builder = "ci/" + name,  # disambiguate by prefixing the bucket name.
-        console_view = "CI Console",
-        category = category,
-    )
-
-# Define a linux 64 builder.
-ci_builder("linux", os = "Ubuntu-18", category = "Linux|18")
-
-def try_builder(name, *, os, cpu = "x86-64"):
-    """Defines a pre-submit builder."""
-    luci.builder(
-        name = name,
-        bucket = "try",
-        executable = luci.recipe(
-            name = "try_builder",
-            cipd_package = RECIPE_BUNDLE,
-            cipd_version = RECIPE_VERSION,
-        ),
-        dimensions = {
-            "os": os,
-            "cpu": cpu or "x86-64",
-            "pool": "luci.flex.try",
-        },
-        service_account = "open-codecs-try-builder@chops-service-accounts.iam.gserviceaccount.com",
-        execution_timeout = 45 * time.minute,
-    )
-
-    # Add to the CQ.
-    luci.cq_tryjob_verifier(
-        builder = "try/" + name,
-        cq_group = "MainCQ",
-    )
-
-    # And also to the pre-submit builders list.
-    luci.list_view_entry(
-        builder = "try/" + name,
-        list_view = "Try Builders",
-    )
-
-# Define a linux 64 builder
-try_builder("linux", os = "Ubuntu-18")
-
 ################################################################################
-exec("presubmit.star")
-exec("recipes.star")
+exec("subprojects/codecs_infra/codecs_infra.star")
+exec("subprojects/libwebm/libwebm.star")

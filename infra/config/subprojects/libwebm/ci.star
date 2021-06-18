@@ -11,12 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Builders supporting recipes ecosystem.
 
+This configuration defines libwebm ci builders.
+
+After modifying this file execute ('lucicfg generate main.star') to regenerate
+the configs.
 """
-OpenCodecs Common Definitions
-"""
-REPO_URL = "https://chromium.googlesource.com/codecs/infra"
-REPO_REFS = "refs/heads/main"
-CIPD_PREFIX = "infra/recipe_bundles"
-RECIPE_BUNDLE = "%s/chromium.googlesource.com/codecs/infra" % CIPD_PREFIX
-RECIPE_VERSION = "refs/heads/main"
+
+load("//lib/common.star", "LIBWEBM_REPO_URL", "REPO_REFS")
+load("//lib/ci_helper.star", "ci_helper")
+
+libwebm_ci_builder = ci_helper.setup_builder(
+    prefix = "libwebm",
+    repo = LIBWEBM_REPO_URL,
+    refs = [REPO_REFS],
+)
+
+libwebm_ci_builder(name = "linux", recipe = "ci_builder")
