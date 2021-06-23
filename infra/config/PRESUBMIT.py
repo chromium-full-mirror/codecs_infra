@@ -47,6 +47,16 @@ def CommonChecks(input_api, output_api):
         input_api.canned_checks.CheckLucicfgGenOutput(input_api, output_api,
                                                       'main.star'))
 
+  # Run Lucicfg lint.
+  results.extend(
+      input_api.RunTests([
+          input_api.Command(
+              name="lucicfg lint",
+              cmd=["lucicfg", "lint", input_api._current_presubmit_path],
+              kwargs={},
+              message=output_api.PresubmitError)
+      ]))
+
   # Run pylint.
   results.extend(
       input_api.canned_checks.RunPylint(
