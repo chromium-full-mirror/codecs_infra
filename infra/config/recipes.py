@@ -112,7 +112,8 @@ IS_WIN = sys.platform.startswith(('win', 'cygwin'))
 
 _BAT = '.bat' if IS_WIN else ''
 GIT = 'git' + _BAT
-VPYTHON = 'vpython' + _BAT
+VPYTHON = ('vpython' + ('3' if os.getenv('RECIPES_USE_PY3') == 'true' else '') +
+           _BAT)
 CIPD = 'cipd' + _BAT
 REQUIRED_BINARIES = {GIT, VPYTHON, CIPD}
 
@@ -223,7 +224,6 @@ def main():
     if not _is_on_path(required_binary):
       return 'Required binary is not found on PATH: %s' % required_binary
 
-
   if '--verbose' in sys.argv:
     logging.getLogger().setLevel(logging.INFO)
 
@@ -242,7 +242,6 @@ def main():
     repo_root = os.path.abspath(repo_root).decode()
     recipes_cfg_path = os.path.join(repo_root, 'infra', 'config', 'recipes.cfg')
     args = ['--package', recipes_cfg_path] + args
-
   engine_path = checkout_engine(engine_override, repo_root, recipes_cfg_path)
 
   argv = (
