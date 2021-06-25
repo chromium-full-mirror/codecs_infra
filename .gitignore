@@ -2,6 +2,7 @@
 .recipe_deps/
 *.pyc
 __init__.py
+*.expected
 
 # IDEs
 .idea/
