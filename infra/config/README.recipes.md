@@ -8,6 +8,7 @@
 **[Recipes](#Recipes)**
   * [checkout:examples/full](#recipes-checkout_examples_full)
   * [ci_builder](#recipes-ci_builder)
+  * [run_infra_scripts](#recipes-run_infra_scripts)
   * [try_builder](#recipes-try_builder)
 ## Recipe Modules
 
@@ -24,12 +25,17 @@
 
 [DEPS](/infra/config/recipe_modules/checkout/examples/full.py#15): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/infra/config/recipe_modules/checkout/examples/full.py#23)(api):**
+&mdash; **def [RunSteps](/infra/config/recipe_modules/checkout/examples/full.py#24)(api):**
 ### *recipes* / [ci\_builder](/infra/config/recipes/ci_builder.py)
 
 [DEPS](/infra/config/recipes/ci_builder.py#17): [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 &mdash; **def [RunSteps](/infra/config/recipes/ci_builder.py#20)(api):**
+### *recipes* / [run\_infra\_scripts](/infra/config/recipes/run_infra_scripts.py)
+
+[DEPS](/infra/config/recipes/run_infra_scripts.py#18): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+&mdash; **def [RunSteps](/infra/config/recipes/run_infra_scripts.py#29)(api, properties):**
 ### *recipes* / [try\_builder](/infra/config/recipes/try_builder.py)
 
 [DEPS](/infra/config/recipes/try_builder.py#17): [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -39,6 +45,7 @@
 [depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9f6aa1ba78039346e31bd586fa4548c5965e5f39/recipes/README.recipes.md#recipe_modules-git
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9f6aa1ba78039346e31bd586fa4548c5965e5f39/recipes/README.recipes.md#recipe_modules-tryserver
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-buildbucket
+[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-properties
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-step

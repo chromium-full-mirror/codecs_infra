@@ -3,6 +3,7 @@
 *.pyc
 __init__.py
 *.expected
+!infra/config/recipe_modules/**/__init__.py
 
 # IDEs
 .idea/

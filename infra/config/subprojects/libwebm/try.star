@@ -28,5 +28,12 @@ libwebm_try_builder = try_helper.setup_builder(
     refs = [REPO_REFS],
 )
 
-libwebm_try_builder(name = "linux", recipe = "try_builder")
+libwebm_try_builder(
+    name = "linux",
+    recipe = "run_infra_script",
+    properties = {
+        "script_name": "compile.sh",
+        "script_args": ["static", "x86_64-linux-gnu"],
+    },
+)
 libwebm_try_builder(name = "patch-check", builder_creator = try_helper.patch_check_builder)
