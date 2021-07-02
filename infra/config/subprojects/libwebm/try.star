@@ -22,18 +22,46 @@ the configs.
 load("//lib/common.star", "LIBWEBM_REPO_URL", "REPO_REFS")
 load("//lib/try_helper.star", "try_helper")
 
+# Libwebm compile configuration matrix.
+_LIBWEBM_COMPILE_BUILD_TYPES = ["static", "static-debug"]
+_LIBWEBM_COMPILE_TARGETS = {
+    "x86_64-linux-gnu": "native",
+    "x86_64-linux-clang": "clang",
+    "x86_64-linux-gnu-make": "native-Makefile.unix",
+    "i686-w64-mingw32": "i686-w64-mingw32",
+    "x86_64-w64-mingw32": "x86_64-w64-mingw32",
+}
+
 libwebm_try_builder = try_helper.setup_builder(
     prefix = "libwebm",
     repo = LIBWEBM_REPO_URL,
     refs = [REPO_REFS],
 )
 
+def _libwebm_compile_builder(*, name, **kwargs):
+    builders = []
+    for config in _LIBWEBM_COMPILE_BUILD_TYPES:
+        for host, target in _LIBWEBM_COMPILE_TARGETS.items():
+            build_type = "" if config == "static" else "-debug"
+            builder_name = "%s-%s%s" % (name, host, build_type)
+            properties = {
+                "script_name": "compile.sh",
+                "script_arg": [config, target],
+            }
+
+            builders.append(
+                try_helper.create_builder(
+                    name = builder_name,
+                    os = "linux",
+                    properties = properties,
+                    **kwargs
+                ),
+            )
+    return builders
+
 libwebm_try_builder(
-    name = "linux",
-    recipe = "run_infra_scripts",
-    properties = {
-        "script_name": "compile.sh",
-        "script_arg": ["static", "native"],
-    },
+    name = "compile",
+    builder_creator = _libwebm_compile_builder,
+    recipe = "run_infra_script",
 )
 libwebm_try_builder(name = "patch-check", builder_creator = try_helper.patch_check_builder)
