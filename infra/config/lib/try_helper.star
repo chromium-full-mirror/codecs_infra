@@ -43,7 +43,7 @@ def _patch_check_builder(
       **kwargs: injected keywords
     """
 
-    builder_name = "%s-%s-patch-check" % (prefix, name)
+    builder_name = "%s-%s" % (prefix, name)
     luci.builder(
         name = builder_name,
         bucket = "try",

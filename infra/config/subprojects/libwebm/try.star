@@ -29,3 +29,4 @@ libwebm_try_builder = try_helper.setup_builder(
 )
 
 libwebm_try_builder(name = "linux", recipe = "try_builder")
+libwebm_try_builder(name = "patch-check", builder_creator = try_helper.patch_check_builder)
