@@ -30,7 +30,7 @@ libwebm_try_builder = try_helper.setup_builder(
 
 libwebm_try_builder(
     name = "linux",
-    recipe = "run_infra_script",
+    recipe = "run_infra_scripts",
     properties = {
         "script_name": "compile.sh",
         "script_args": ["static", "x86_64-linux-gnu"],
