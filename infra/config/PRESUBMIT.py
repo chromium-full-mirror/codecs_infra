@@ -20,6 +20,8 @@ details on the presubmit API built into depot_tools.
 import fnmatch
 import os
 
+USE_PYTHON3 = True
+
 
 def GetFilesToSkip(input_api):
   return list(input_api.DEFAULT_FILES_TO_SKIP) + [
