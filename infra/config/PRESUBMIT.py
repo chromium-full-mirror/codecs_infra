@@ -21,6 +21,7 @@ import fnmatch
 import os
 
 USE_PYTHON3 = True
+_CODECS_INFRA_MAX_LINE_LENGTH = 80
 
 
 def GetFilesToSkip(input_api):
@@ -40,7 +41,17 @@ def CommonChecks(input_api, output_api):
 
   results.extend(
       input_api.canned_checks.CheckPatchFormatted(input_api, output_api))
-
+  results.extend(
+      input_api.canned_checks.CheckChangeHasNoCrAndHasOnlyOneEol(
+          input_api, output_api))
+  results.extend(
+      input_api.canned_checks.CheckChangeHasNoTabs(input_api, output_api))
+  results.extend(
+      input_api.canned_checks.CheckChangeHasNoStrayWhitespace(
+          input_api, output_api))
+  results.extend(
+      input_api.canned_checks.CheckLongLines(
+          input_api, output_api, maxlen=_CODECS_INFRA_MAX_LINE_LENGTH))
   tests = []
 
   # Verify *.cfg match original *.star. Has trouble working on Win.
