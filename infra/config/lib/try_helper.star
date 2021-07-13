@@ -152,7 +152,7 @@ def _setup_builder(
         dimensions = {
             "os": os,
             "cpu": cpu_arch,
-            "pool": "luci.flex.try",
+            "pool": "luci.open-codecs.try",
         }
 
         # Builder callback

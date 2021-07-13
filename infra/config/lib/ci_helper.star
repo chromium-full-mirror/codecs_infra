@@ -104,7 +104,7 @@ def _setup_builder(
         dimensions = {
             "os": os,
             "cpu": cpu_arch,
-            "pool": "luci.flex.ci",
+            "pool": "luci.open-codecs.ci",
         }
         builder_creator(
             prefix = prefix,
