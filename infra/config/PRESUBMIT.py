@@ -24,7 +24,7 @@ USE_PYTHON3 = True
 _CODECS_INFRA_MAX_LINE_LENGTH = 80
 
 
-def GetFilesToSkip(input_api):
+def _GetFilesToSkip(input_api):
   return list(input_api.DEFAULT_FILES_TO_SKIP) + [
       r'.*recipes.py$',
       # Exclude all "...recipe_deps" directories.
@@ -33,7 +33,14 @@ def GetFilesToSkip(input_api):
       # Each is an independent recipe checkout. If Pylint is run on
       # these, it will hang forever, so we must exclude them.
       r'^(.*/)?\..*recipe_deps/.*',
+      # Exclude generated files by lucicfg.
+      r'.*/generated/.*\.cfg',
   ]
+
+
+def _SourceFileFilter(input_api, files_to_check=None, files_to_skip=None):
+  return lambda x: input_api.FilterSourceFile(
+      x, files_to_check=files_to_check, files_to_skip=files_to_skip)
 
 
 def CommonChecks(input_api, output_api):
@@ -49,9 +56,16 @@ def CommonChecks(input_api, output_api):
   results.extend(
       input_api.canned_checks.CheckChangeHasNoStrayWhitespace(
           input_api, output_api))
+
+  source_file_filter = _SourceFileFilter(
+      input_api, files_to_skip=_GetFilesToSkip(input_api))
   results.extend(
       input_api.canned_checks.CheckLongLines(
-          input_api, output_api, maxlen=_CODECS_INFRA_MAX_LINE_LENGTH))
+          input_api,
+          output_api,
+          maxlen=_CODECS_INFRA_MAX_LINE_LENGTH,
+          source_file_filter=source_file_filter))
+
   tests = []
 
   # Verify *.cfg match original *.star. Has trouble working on Win.
@@ -73,7 +87,7 @@ def CommonChecks(input_api, output_api):
   # Run pylint.
   results.extend(
       input_api.canned_checks.RunPylint(
-          input_api, output_api, files_to_skip=GetFilesToSkip(input_api)))
+          input_api, output_api, files_to_skip=_GetFilesToSkip(input_api)))
 
   results.extend(input_api.RunTests(tests))
   return results
