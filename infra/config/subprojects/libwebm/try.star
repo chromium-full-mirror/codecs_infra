@@ -33,7 +33,7 @@ libwebm_try_builder(
     recipe = "run_infra_scripts",
     properties = {
         "script_name": "compile.sh",
-        "script_args": ["static", "x86_64-linux-gnu"],
+        "script_arg": ["static", "native"],
     },
 )
 libwebm_try_builder(name = "patch-check", builder_creator = try_helper.patch_check_builder)
