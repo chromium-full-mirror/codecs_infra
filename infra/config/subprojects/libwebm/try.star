@@ -26,7 +26,7 @@ load("//lib/try_helper.star", "try_helper")
 _LIBWEBM_COMPILE_BUILD_TYPES = ["static", "static-debug"]
 _LIBWEBM_COMPILE_TARGETS = {
     "x86_64-linux-gnu": "native",
-    "x86_64-linux-clang": "clang",
+    "x86_64-linux-clang": "native-clang",
     "x86_64-linux-gnu-make": "native-Makefile.unix",
     "i686-w64-mingw32": "i686-w64-mingw32",
     "x86_64-w64-mingw32": "x86_64-w64-mingw32",
