@@ -78,7 +78,6 @@ luci.project(
             ],
             groups = [
                 "project-open-codecs-committers",
-                "project-open-codecs-ci-task-accounts",
             ],
         ),
         # Ability to launch CQ dry runs.
@@ -92,10 +91,47 @@ luci.project(
             groups = "luci-logdog-open-codecs-writers",
         ),
     ],
+    bindings = [
+        luci.binding(
+            roles = "role/swarming.poolOwner",
+            groups = "project-open-codecs-admins",
+        ),
+        luci.binding(
+            roles = "role/swarming.poolViewer",
+            groups = "project-open-codecs-committers",
+        ),
+    ],
+)
+
+# Swarming permissions in realms.cfg.
+luci.realm(name = "pools/ci")
+luci.realm(name = "pools/try")
+
+# Led users
+def led_users(pool_realm, builder_realm, groups):
+    luci.binding(
+        roles = "role/swarming.taskTriggerer",
+        realm = builder_realm,
+        groups = groups,
+    )
+    luci.binding(
+        roles = "role/swarming.poolUser",
+        realm = pool_realm,
+        groups = groups,
+    )
+
+led_users(
+    pool_realm = "pools/try",
+    builder_realm = "try",
+    groups = [
+        "project-open-codecs-admins",
+        "project-open-codecs-tryjob-access",
+    ],
 )
 
 luci.milo(
-    logo = "https://storage.googleapis.com/downloads.webmproject.org/media/images/oc-logo-luci.svg",
+    logo =
+        "https://storage.googleapis.com/downloads.webmproject.org/media/images/oc-logo-luci.svg",
 )
 
 # Required Logdog configuration.
@@ -106,10 +142,8 @@ luci.cq(status_host = "chromium-cq-status.appspot.com")
 luci.bucket(
     name = "ci",
     acls = [
-        # Allow launching ci directly (in addition to doing it through CQ).
         acl.entry(
             roles = [acl.BUILDBUCKET_TRIGGERER, acl.SCHEDULER_TRIGGERER],
-            users = ["luci-scheduler@appspot.gserviceaccount.com"],
             groups = "project-open-codecs-ci-task-accounts",
         ),
     ],
@@ -122,7 +156,7 @@ luci.bucket(
         # Allow launching tryjobs directly (in addition to doing it through CQ).
         acl.entry(
             roles = acl.BUILDBUCKET_TRIGGERER,
-            groups = "project-open-codecs-try-task-accounts",
+            groups = "project-open-codecs-tryjob-access",
         ),
     ],
 )
