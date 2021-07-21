@@ -16,3 +16,4 @@ DEPS = [
     'depot_tools/git',
     'depot_tools/tryserver',
 ]
+PYTHON_VERSION_COMPATIBILITY = "PY3"

@@ -24,6 +24,7 @@ DEPS = [
     'recipe_engine/context',
 ]
 PROPERTIES = InputProperties
+PYTHON_VERSION_COMPATIBILITY = "PY3"
 
 
 def RunSteps(api, properties):
