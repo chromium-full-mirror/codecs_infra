@@ -17,6 +17,7 @@ CI_BUILDER_ACCOUNT = "open-codecs-ci-builder@chops-service-accounts.iam.gservice
 CIPD_PREFIX = "infra/recipe_bundles"
 CODECS_INFRA_REPO_URL = "https://chromium.googlesource.com/codecs/infra"
 LIBWEBM_REPO_URL = "https://chromium.googlesource.com/webm/libwebm"
+LIBWEBP_REPO_URL = "https://chromium.googlesource.com/webm/libwebp"
 LIBWEBP2_REPO_URL = "https://chromium.googlesource.com/codecs/libwebp2"
 RECIPE_BUNDLE = "%s/chromium.googlesource.com/codecs/infra" % CIPD_PREFIX
 RECIPE_VERSION = "refs/heads/main"
