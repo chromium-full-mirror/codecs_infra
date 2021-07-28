@@ -41,6 +41,10 @@ _LIBWEBM_COMPILE_ANDROID_TARGETS = {
     "x86_64-android": "x86_64",
 }
 
+# Libwebm test configuration matrix.
+_LIBWEBM_TEST_TARGETS = ["asan", "ubsan", "valgrind"]
+_LIBWEBM_TEST_SANITIZERS = ["x86", "x86_64"]
+
 def _libwebm_compile_builder(
         *,
         name,
@@ -77,6 +81,41 @@ def _libwebm_compile_builder(
             )
     return builders
 
+def _libwebm_test_builder(
+        *,
+        name,
+        script_name,
+        sanitizers = [],
+        test_targets = {},
+        **kwargs):
+    """Defines Libwebm unit test builds
+
+    Args:
+      name: name of builder
+      script_name: test script
+      sanitizers: test script sanitizer list
+      test_targets: host platform to cross-compile list
+      **kwargs: other keywords args
+    """
+    builders = []
+    for sanitizer in sanitizers:
+        for target in test_targets:
+            builder_name = "%s-%s-%s" % (name, sanitizer, target)
+            properties = {
+                "script_name": script_name,
+                "script_arg": "%s-%s" % (target, sanitizer),
+            }
+
+            builders.append(
+                try_helper.create_builder(
+                    name = builder_name,
+                    os = "linux",
+                    properties = properties,
+                    **kwargs
+                ),
+            )
+    return builders
+
 libwebm_try_builder = try_helper.setup_builder(
     prefix = "libwebm",
     repo = LIBWEBM_REPO_URL,
@@ -84,7 +123,7 @@ libwebm_try_builder = try_helper.setup_builder(
 )
 
 # Defines libwebm builds for unix-based and mingw cross-compiled platforms.
-# e.g. :
+# e.g.:
 # - libwebm-compile-x86_64-linux-clang
 # - libwebm-compile-x86_64-linux-clang-debug
 # For more details, please refer to infra/config/generated/commit-queue.cfg.
@@ -98,7 +137,7 @@ libwebm_try_builder(
 )
 
 # Defines libwebm builds for android-based platforms.
-# e.g. :
+# e.g.:
 #  - libwebm-compile-arm64-v8a-android
 #  - libwebm-compile-arm64-v8a-android-debug
 # For more details, please refer to infra/config/generated/commit-queue.cfg.
@@ -108,6 +147,20 @@ libwebm_try_builder(
     script_name = "compile_android.sh",
     build_types = _LIBWEBM_COMPILE_ANDROID_BUILD_TYPES,
     compile_targets = _LIBWEBM_COMPILE_ANDROID_TARGETS,
+    recipe = "run_infra_script",
+)
+
+# Defines libwebm googletests and run-time checks.
+# e.g:
+# - libwebm-tests-x86-asan
+# - libwebm-tests-x86_64-asan
+# For more details, please refer to infra/config/generated/commit-queue.cfg.
+libwebm_try_builder(
+    name = "tests",
+    builder_creator = _libwebm_test_builder,
+    script_name = "run_unit_tests.sh",
+    sanitizers = _LIBWEBM_TEST_SANITIZERS,
+    test_targets = _LIBWEBM_TEST_TARGETS,
     recipe = "run_infra_script",
 )
 
