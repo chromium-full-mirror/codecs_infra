@@ -82,6 +82,12 @@ libwebm_try_builder = try_helper.setup_builder(
     repo = LIBWEBM_REPO_URL,
     refs = [REPO_REFS],
 )
+
+# Defines libwebm builds for unix-based and mingw cross-compiled platforms.
+# e.g. :
+# - libwebm-compile-x86_64-linux-clang
+# - libwebm-compile-x86_64-linux-clang-debug
+# For more details, please refer to infra/config/generated/commit-queue.cfg.
 libwebm_try_builder(
     name = "compile",
     builder_creator = _libwebm_compile_builder,
@@ -90,6 +96,12 @@ libwebm_try_builder(
     compile_targets = _LIBWEBM_COMPILE_TARGETS,
     recipe = "run_infra_script",
 )
+
+# Defines libwebm builds for android-based platforms.
+# e.g. :
+#  - libwebm-compile-arm64-v8a-android
+#  - libwebm-compile-arm64-v8a-android-debug
+# For more details, please refer to infra/config/generated/commit-queue.cfg.
 libwebm_try_builder(
     name = "compile",
     builder_creator = _libwebm_compile_builder,
@@ -98,6 +110,8 @@ libwebm_try_builder(
     compile_targets = _LIBWEBM_COMPILE_ANDROID_TARGETS,
     recipe = "run_infra_script",
 )
+
+# Style-check and patch check builder for libwebm.
 libwebm_try_builder(
     name = "patch-check",
     builder_creator = try_helper.patch_check_builder,
