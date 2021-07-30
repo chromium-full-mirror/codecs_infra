@@ -42,8 +42,8 @@ _LIBWEBM_COMPILE_ANDROID_TARGETS = {
 }
 
 # Libwebm test configuration matrix.
-_LIBWEBM_TEST_TARGETS = ["asan", "ubsan", "valgrind"]
-_LIBWEBM_TEST_SANITIZERS = ["x86", "x86_64"]
+_LIBWEBM_TEST_SANITIZERS = ["asan", "ubsan", "valgrind"]
+_LIBWEBM_TEST_TARGETS = ["x86", "x86_64"]
 
 def _libwebm_compile_builder(
         *,
@@ -100,10 +100,10 @@ def _libwebm_test_builder(
     builders = []
     for sanitizer in sanitizers:
         for target in test_targets:
-            builder_name = "%s-%s-%s" % (name, sanitizer, target)
+            builder_name = "%s-%s-%s" % (name, target, sanitizer)
             properties = {
                 "script_name": script_name,
-                "script_arg": "%s-%s" % (target, sanitizer),
+                "script_arg": ["%s-%s" % (target, sanitizer)],
             }
 
             builders.append(
