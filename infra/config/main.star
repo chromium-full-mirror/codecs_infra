@@ -174,3 +174,4 @@ luci.list_view(name = "Try Builders")
 ################################################################################
 exec("subprojects/codecs_infra/codecs_infra.star")
 exec("subprojects/libwebm/libwebm.star")
+exec("subprojects/libwebp2/libwebp2.star")
