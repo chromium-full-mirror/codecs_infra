@@ -26,6 +26,16 @@ DEPS = [
 PROPERTIES = InputProperties
 PYTHON_VERSION_COMPATIBILITY = "PY3"
 
+_INFRA_DIRECTORIES = ['infra', 'presubmit']
+
+
+def _FindScriptInDir(path, root_dir, script_name):
+  for directory in _INFRA_DIRECTORIES:
+    script_path = root_dir.join(directory, script_name)
+    if path.exists(script_path):
+      return True, script_path
+  return False, ''
+
 
 def RunSteps(api, properties):
   api.step('git checkout', ['echo', 'git checkout'])
@@ -33,10 +43,11 @@ def RunSteps(api, properties):
 
   script_name = properties.script_name
   script_args = list(properties.script_arg)
-  script_path = api.path['checkout'].join('infra', script_name)
+  script_found, script_path = _FindScriptInDir(api.path, api.path['checkout'],
+                                               script_name)
 
-  if not api.path.exists(script_path):
-    api.step('Script not found', ['echo', '%s not found.' % script_path])
+  if not script_found:
+    api.step('Script not found', ['echo', '%s not found.' % script_name])
     api.step(
         'Failed to find script, %s, is not a part of this branch' % script_name,
         ['false'])
@@ -49,31 +60,34 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
-  yield (api.test('Infra script does not exist') + api.buildbucket.try_build(
-      'repo',
-      'linux',
-      git_repo='https://chromium.googlesource.com/webm/libwebm',
-      change_number=405009,
-      patch_set=1) + api.properties(
-          InputProperties(
-              script_name='compile.sh', script_arg=['some', 'args'])) +
-         api.post_process(StepCommandRE, 'Script not found',
-                          ['echo', '.*/infra/compile.sh not found.']) +
-         api.post_process(
-             StepCommandRE,
-             'Failed to find script, compile.sh, is not a part of this branch',
-             ['false']))
-  yield (
-      api.test('Infra script does exist') + api.buildbucket.try_build(
-          'repo',
-          'linux',
-          git_repo='https://chromium.googlesource.com/webm/libwebm',
-          change_number=405009,
-          patch_set=1) + api.properties(
-              InputProperties(
-                  script_name='compile.sh', script_arg=['some', 'args'])) +
-      api.path.exists(api.path['checkout'].join('infra', 'compile.sh')) +
-      api.post_process(StepCommandRE, 'Script found',
-                       ['echo', '.*/infra/compile.sh found.']) +
-      api.post_process(StepCommandRE, 'Running compile.sh some args',
-                       ['bash', '-xe', '.*/infra/compile.sh', 'some', 'args']))
+  for infra_dir in _INFRA_DIRECTORIES:
+    yield (
+        api.test('Infra script does not exist in %s' % infra_dir) +
+        api.buildbucket.try_build(
+            'repo',
+            'linux',
+            git_repo='https://chromium.googlesource.com/webm/libwebm',
+            change_number=405009,
+            patch_set=1) + api.properties(
+                InputProperties(
+                    script_name='compile.sh', script_arg=['some', 'args'])) +
+        api.post_process(StepCommandRE, 'Script not found',
+                         ['echo', 'compile.sh not found.']) +
+        api.post_process(
+            StepCommandRE,
+            'Failed to find script, compile.sh, is not a part of this branch',
+            ['false']))
+    yield (api.test('Infra script does exist in %s' % infra_dir) +
+           api.buildbucket.try_build(
+               'repo',
+               'linux',
+               git_repo='https://chromium.googlesource.com/webm/libwebm',
+               change_number=405009,
+               patch_set=1) + api.properties(
+                   InputProperties(
+                       script_name='compile.sh', script_arg=['some', 'args'])) +
+           api.path.exists(api.path['checkout'].join(infra_dir, 'compile.sh')) +
+           api.post_process(StepCommandRE, 'Script found',
+                            ['echo', '.*/*/compile.sh found.']) +
+           api.post_process(StepCommandRE, 'Running compile.sh some args',
+                            ['bash', '-xe', '.*/*/compile.sh', 'some', 'args']))
