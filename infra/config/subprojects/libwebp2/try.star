@@ -32,3 +32,12 @@ libwebp2_try_builder(
     name = "patch-check",
     builder_creator = try_helper.patch_check_builder,
 )
+
+libwebp2_try_builder(
+    name = "test-linux-x86_64-gnu",
+    recipe = "run_infra_script",
+    properties = {
+        "script_name": "build_and_test.sh",
+        "script_arg": [],
+    },
+)
