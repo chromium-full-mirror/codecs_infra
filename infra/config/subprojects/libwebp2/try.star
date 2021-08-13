@@ -34,7 +34,7 @@ libwebp2_try_builder(
 )
 
 libwebp2_try_builder(
-    name = "test-linux-x86_64-gnu",
+    name = "tests-x86_64-linux-gnu",
     recipe = "run_infra_script",
     properties = {
         "script_name": "build_and_test.sh",
