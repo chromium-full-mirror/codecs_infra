@@ -69,6 +69,9 @@ def _libwebm_compile_builder(
             properties = {
                 "script_name": script_name,
                 "script_arg": [config, target],
+                "env": {
+                    "PATH": "%(PATH)s:/opt/android-ndk/",
+                },
             }
 
             builders.append(

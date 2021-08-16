@@ -24,6 +24,6 @@ message InputProperties {
   repeated string script_arg = 2;
 
   // Environment variables
-  map<string, string> env = 5;
+  map<string, string> env = 3;
 }
 

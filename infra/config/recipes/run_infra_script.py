@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from google.protobuf.internal.containers import ScalarMap
 from PB.recipes.codecs.input_properties import InputProperties
 from recipe_engine.post_process import StepCommandRE, DropExpectation
 
@@ -53,7 +54,12 @@ def RunSteps(api, properties):
         ['false'])
     return
 
-  with api.context(cwd=api.path['checkout'], env=properties.env):
+  # properties.env is ScalarMap {unicode: str} and context accepts
+  # dict {str: str}.
+  assert isinstance (properties.env, ScalarMap)
+  env_vars = {str(k): v for k, v in properties.env.items()}
+
+  with api.context(cwd=api.path['checkout'], env=env_vars):
     api.step('Script found', ['echo', '%s found.' % script_path])
     api.step('Running %s %s' % (script_name, ' '.join(script_args)),
              ['bash', '-xe', script_path] + script_args)
@@ -70,7 +76,8 @@ def GenTests(api):
             change_number=405009,
             patch_set=1) + api.properties(
                 InputProperties(
-                    script_name='compile.sh', script_arg=['some', 'args'])) +
+                    script_name='compile.sh', script_arg=['some', 'args']),
+                env={'PATH': '/opt/android-ndk/:%(PATH)s'}) +
         api.post_process(StepCommandRE, 'Script not found',
                          ['echo', 'compile.sh not found.']) +
         api.post_process(
@@ -85,7 +92,8 @@ def GenTests(api):
                change_number=405009,
                patch_set=1) + api.properties(
                    InputProperties(
-                       script_name='compile.sh', script_arg=['some', 'args'])) +
+                       script_name='compile.sh', script_arg=['some', 'args']),
+                   env={'PATH': '/opt/android-ndk/:%(PATH)s'}) +
            api.path.exists(api.path['checkout'].join(infra_dir, 'compile.sh')) +
            api.post_process(StepCommandRE, 'Script found',
                             ['echo', '.*/*/compile.sh found.']) +
