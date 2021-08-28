@@ -28,6 +28,7 @@ libwebp_try_builder = try_helper.setup_builder(
     refs = [REPO_REFS],
 )
 
+# Style-check and patch check builder for libwebp.
 libwebp_try_builder(
     name = "patch-check",
     builder_creator = try_helper.patch_check_builder,
