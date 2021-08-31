@@ -21,6 +21,7 @@ the configs.
 
 load(
     "//lib/common.star",
+    "ANDROID_NDK_DIR",
     "EMSDK_DIR",
     "LIBWEBP_REPO_URL",
     "REPO_REFS",
@@ -88,6 +89,20 @@ _LIBWEBP_COMPILE_EXCLUDED = [
     "wasm-shared",
 ]
 
+# Libwebp compile android configuration matrix.
+_LIBWEBP_COMPILE_ANDROID_BUILD_TYPES = [
+    "static",
+    "static-debug",
+    "shared",
+    "shared-debug",
+]
+_LIBWEBP_COMPILE_ANDROID_TARGETS = [
+    "armeabi-v7a",
+    "arm64-v8a",
+    "x86",
+    "x86_64",
+]
+
 def _libwebp_compile_builder(
         *,
         name,
@@ -109,12 +124,10 @@ def _libwebp_compile_builder(
     builders = []
     for config in build_types:
         for target in compile_targets:
-            if "debug" in config:
-                build_type = "-debug"
-            elif "shared" in config:
-                build_type = "-shared"
+            if "static" in config:
+                build_type = config.replace("static", "")
             else:
-                build_type = ""
+                build_type = "-" + config
 
             builder_name = target + build_type
             if builder_name in excluded_builders:
@@ -124,6 +137,11 @@ def _libwebp_compile_builder(
             properties = {
                 "script_name": script_name,
                 "script_arg": [config, target],
+                "env": {
+                    # %(PATH)s is filled up by recipe
+                    "PATH": "%(PATH)s:" + ANDROID_NDK_DIR,
+                    "ANDROID_NDK_DIR": ANDROID_NDK_DIR,
+                },
             }
 
             builders.append(
@@ -182,4 +200,20 @@ libwebp_try_builder(
         "script_name": "abicheck.sh",
         "script_arg": [REPO_REFS],
     },
+)
+
+# Defines libwebp builds for android-based platforms.
+# e.g.:
+#  - libwebp-compile-android-arm64-v8a
+#  - libwebp-compile-android-arm64-v8a-debug
+#  - libwebp-compile-android-arm64-v8a-shared
+#  - libwebp-compile-android-arm64-v8a-shared-debug
+# For more details, please refer to infra/config/generated/commit-queue.cfg.
+libwebp_try_builder(
+    name = "compile-android",
+    builder_creator = _libwebp_compile_builder,
+    script_name = "compile_android.sh",
+    build_types = _LIBWEBP_COMPILE_ANDROID_BUILD_TYPES,
+    compile_targets = _LIBWEBP_COMPILE_ANDROID_TARGETS,
+    recipe = "run_infra_script",
 )

@@ -13,6 +13,7 @@
 # limitations under the License.
 """OpenCodecs Common Definitions
 """
+ANDROID_NDK_DIR = "/opt/android-ndk/"
 CI_BUILDER_ACCOUNT = "open-codecs-ci-builder@chops-service-accounts.iam.gserviceaccount.com"
 CIPD_PREFIX = "infra/recipe_bundles"
 CODECS_INFRA_REPO_URL = "https://chromium.googlesource.com/codecs/infra"
