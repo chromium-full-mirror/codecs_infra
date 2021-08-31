@@ -113,6 +113,17 @@ _LIBWEBP_COMPILE_ANDROID_TARGETS = [
 # Libwebp static analysis configuration list.
 _LIBWEBP_STATIC_ANALYSIS_MODES = ["shallow", "deep"]
 
+# Libwebp test configuration matrix.
+_LIBWEBP_TEST_BUILD_TYPES = [
+    "static",
+]
+_LIBWEBP_TEST_TARGETS = [
+    "i686-w64-mingw32",
+    "x86_64-w64-mingw32",
+]
+_LIBWEBP_TEST_EXCLUDED = [
+]
+
 # TODO(): Capture index.html output and it will need warning threshold itself.
 def _libwebp_compile_builder(
         *,
@@ -270,5 +281,19 @@ libwebp_try_builder(
     name = "static-analysis",
     builder_creator = _libwebp_static_analysis_builder,
     scan_build_modes = _LIBWEBP_STATIC_ANALYSIS_MODES,
+    recipe = "run_infra_script",
+)
+
+# Defines libwebp test platforms.
+# e.g.:
+#  - libwebp-test-x86_64-w64-mingw32
+# For more details, please refer to infra/config/generated/commit-queue.cfg.
+libwebp_try_builder(
+    name = "test",
+    builder_creator = _libwebp_compile_builder,
+    script_name = "build_and_test.sh",
+    build_types = _LIBWEBP_TEST_BUILD_TYPES,
+    compile_targets = _LIBWEBP_TEST_TARGETS,
+    excluded_builders = _LIBWEBP_TEST_EXCLUDED,
     recipe = "run_infra_script",
 )
