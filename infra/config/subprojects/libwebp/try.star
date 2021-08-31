@@ -19,7 +19,12 @@ After modifying this file execute ('lucicfg generate main.star') to regenerate
 the configs.
 """
 
-load("//lib/common.star", "LIBWEBP_REPO_URL", "REPO_REFS")
+load(
+    "//lib/common.star",
+    "EMSDK_DIR",
+    "LIBWEBP_REPO_URL",
+    "REPO_REFS",
+)
 load("//lib/try_helper.star", "try_helper")
 
 # Libwebp compile configuration matrix.
@@ -131,4 +136,15 @@ libwebp_try_builder(
     build_types = _LIBWEBP_COMPILE_BUILD_TYPES,
     compile_targets = _LIBWEBP_COMPILE_TARGETS,
     recipe = "run_infra_script",
+)
+
+# Defines libwebp builds for Emscripten SDK (JS) platforms.
+libwebp_try_builder(
+    name = "compile-js",
+    recipe = "run_infra_script",
+    properties = {
+        "script_name": "compile_js.sh",
+        "script_arg": [],
+        "env": {"EMSDK_DIR": EMSDK_DIR},
+    },
 )
