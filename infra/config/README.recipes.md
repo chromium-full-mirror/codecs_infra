@@ -4,11 +4,13 @@
 
 **[Recipe Modules](#Recipe-Modules)**
   * [checkout](#recipe_modules-checkout) (Python3 ✅) &mdash; Git checkout from Gitiles or Gerrit.
+  * [script_wrapper](#recipe_modules-script_wrapper) (Python3 ✅) &mdash; Recipe module for parsing logs and collect warnings.
 
 **[Recipes](#Recipes)**
   * [checkout:examples/full](#recipes-checkout_examples_full) (Python3 ✅) &mdash; Recipe example for checkout recipe_module.
   * [ci_builder](#recipes-ci_builder) (Python3 ✅) &mdash; CI builder example.
   * [run_infra_script](#recipes-run_infra_script) (Python3 ✅) &mdash; Run shell scripts from target repos.
+  * [script_wrapper:examples/full](#recipes-script_wrapper_examples_full) (Python3 ✅)
   * [try_builder](#recipes-try_builder) (Python3 ✅) &mdash; Try builder example.
 ## Recipe Modules
 
@@ -37,6 +39,39 @@ Checks out repo into api.path['checkout'].
 
 Raises:
   AssertionError: git checkout is not possible.
+### *recipe_modules* / [script\_wrapper](/infra/config/recipe_modules/script_wrapper)
+
+[DEPS](/infra/config/recipe_modules/script_wrapper/__init__.py#15): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe module for parsing logs and collect warnings.
+
+The module can inspect plain text or api.step results.
+
+  Example with step output:
+  DEPS = ['script_wrapper', ...]
+  ....
+    result = api.step('some step', stdout=api.raw_io())
+    api.script_wrapper(warning_threshold=1, logs=result.stdout)
+
+#### **class [ScriptWrapperApi](/infra/config/recipe_modules/script_wrapper/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module that wraps result logs and parses warnings.
+
+&mdash; **def [\_\_call\_\_](/infra/config/recipe_modules/script_wrapper/api.py#36)(self, warning_threshold=0, logs=''):**
+
+Parses logs and collects warnings.
+
+Fails when warning count is higher than the threshold.
+Changes step.presentation.status to WARNING if warning count is not zero.
+
+Args:
+  warning_threshold: max count of collected warnings.
+  logs: input data for the parser. Logs can be multiline.
+
+Raises:
+  StepFailure: error that fails the entire recipe execution.
 ## Recipes
 
 ### *recipes* / [checkout:examples/full](/infra/config/recipe_modules/checkout/examples/full.py)
@@ -62,13 +97,20 @@ CI builder example.
 &mdash; **def [RunSteps](/infra/config/recipes/ci_builder.py#22)(api):**
 ### *recipes* / [run\_infra\_script](/infra/config/recipes/run_infra_script.py)
 
-[DEPS](/infra/config/recipes/run_infra_script.py#20): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipes/run_infra_script.py#22): [checkout](#recipe_modules-checkout), [script\_wrapper](#recipe_modules-script_wrapper), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Run shell scripts from target repos.
 
-&mdash; **def [RunSteps](/infra/config/recipes/run_infra_script.py#42)(api, properties):**
+&mdash; **def [RunSteps](/infra/config/recipes/run_infra_script.py#46)(api, properties):**
+### *recipes* / [script\_wrapper:examples/full](/infra/config/recipe_modules/script_wrapper/examples/full.py)
+
+[DEPS](/infra/config/recipe_modules/script_wrapper/examples/full.py#19): [script\_wrapper](#recipe_modules-script_wrapper), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+&mdash; **def [RunSteps](/infra/config/recipe_modules/script_wrapper/examples/full.py#31)(api, warning_threshold, logs):**
 ### *recipes* / [try\_builder](/infra/config/recipes/try_builder.py)
 
 [DEPS](/infra/config/recipes/try_builder.py#18): [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -85,6 +127,7 @@ Try builder example.
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-properties
+[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-raw_io
 [recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-scheduler
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-step
 [recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/recipe_engine/recipe_api.py#881
