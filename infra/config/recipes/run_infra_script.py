@@ -58,6 +58,7 @@ def RunSteps(api, properties):
   # dict {str: str}.
   assert isinstance (properties.env, ScalarMap)
   env_vars = {str(k): v for k, v in properties.env.items()}
+  env_vars['WORKSPACE'] = api.path.mkdtemp(prefix=api.buildbucket.builder_name)
 
   with api.context(cwd=api.path['checkout'], env=env_vars):
     api.step('Script found', ['echo', '%s found.' % script_path])
