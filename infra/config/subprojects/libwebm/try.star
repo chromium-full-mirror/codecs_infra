@@ -25,18 +25,18 @@ load("//lib/try_helper.star", "try_helper")
 # Libwebm compile configuration matrix.
 _LIBWEBM_COMPILE_BUILD_TYPES = ["static", "static-debug"]
 _LIBWEBM_COMPILE_TARGETS = {
-    "x86_64-linux-gnu": "native",
-    "x86_64-linux-clang": "native-clang",
-    "x86_64-linux-gnu-make": "native-Makefile.unix",
     "i686-w64-mingw32": "i686-w64-mingw32",
+    "x86_64-linux-clang": "native-clang",
+    "x86_64-linux-gnu": "native",
+    "x86_64-linux-gnu-make": "native-Makefile.unix",
     "x86_64-w64-mingw32": "x86_64-w64-mingw32",
 }
 
 # Libwebm compile android configuration matrix.
 _LIBWEBM_COMPILE_ANDROID_BUILD_TYPES = ["release", "debug"]
 _LIBWEBM_COMPILE_ANDROID_TARGETS = {
-    "armeabi-v7a-android": "armeabi-v7a",
     "arm64-v8a-android": "arm64-v8a",
+    "armeabi-v7a-android": "armeabi-v7a",
     "x86-android": "x86",
     "x86_64-android": "x86_64",
 }
