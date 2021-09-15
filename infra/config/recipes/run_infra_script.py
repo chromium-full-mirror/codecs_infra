@@ -52,7 +52,10 @@ def RunSteps(api, properties):
   cipd_paths = api.prerequisites.ensure_tools()
   script_found, script_path = _FindScriptInDir(api.path, api.path['checkout'],
                                                script_name)
-  warning_threshold = 0
+  parser_thresholds = {
+      'warnings': 0,
+      'runtime errors': 0,
+  }
 
   if not script_found:
     api.step('Script not found', ['echo', '%s not found.' % script_name])
@@ -80,8 +83,7 @@ def RunSteps(api, properties):
             stderr=api.raw_io.output(name='stderr', add_output_log=True))
       finally:
         step_stdout = copy.copy(api.step.active_result.stderr)
-        api.script_wrapper(
-            warning_threshold=warning_threshold, logs=step_stdout)
+        api.script_wrapper(logs=step_stdout, thresholds=parser_thresholds)
 
 
 def GenTests(api):
@@ -121,8 +123,8 @@ def GenTests(api):
          api.step_data('Running compile.sh some args.Run infra script',
                        api.raw_io.output('', name='stderr', retcode=1)) +
          api.post_process(StepCommandRE,
-                          'Running compile.sh some args.Parsing Warnings',
-                          ['echo', 'Max of 0 warnings']))
+                          'Running compile.sh some args.Parsing warnings',
+                          ['echo', 'Parsing warnings. Threshold: 0 warnings']))
 
   yield (api.test(
       'Parse warnings from step_results output when infra script succeeds') +
@@ -130,5 +132,5 @@ def GenTests(api):
          api.step_data('Running compile.sh some args.Run infra script',
                        api.raw_io.output('', name='stderr', retcode=0)) +
          api.post_process(StepCommandRE,
-                          'Running compile.sh some args.Parsing Warnings',
-                          ['echo', 'Max of 0 warnings']))
+                          'Running compile.sh some args.Parsing warnings',
+                          ['echo', 'Parsing warnings. Threshold: 0 warnings']))

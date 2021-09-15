@@ -77,25 +77,25 @@ The module can inspect plain text or api.step results.
   DEPS = ['script_wrapper', ...]
   ....
     result = api.step('some step', stdout=api.raw_io())
-    api.script_wrapper(warning_threshold=1, logs=result.stdout)
+    api.script_wrapper(thresholds={'warnings': 1}, logs=result.stdout)
 
-#### **class [ScriptWrapperApi](/infra/config/recipe_modules/script_wrapper/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ScriptWrapperApi](/infra/config/recipe_modules/script_wrapper/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-Module that wraps result logs and parses warnings.
+Module that wraps result logs and parses warnings and runtime errors.
 
-&mdash; **def [\_\_call\_\_](/infra/config/recipe_modules/script_wrapper/api.py#36)(self, warning_threshold=0, logs=''):**
+&mdash; **def [\_\_call\_\_](/infra/config/recipe_modules/script_wrapper/api.py#65)(self, logs, thresholds=None):**
 
-Extracts warnings from logs.
+Extracts warnings and/or runtime errors from logs.
 
-Fails when warning count is higher than the threshold.
-Changes step.presentation.status to WARNING if warning count is not zero.
+Fails the recipe when the parser match count is higher than the threshold.
 
 Args:
-  warning_threshold: max count of extracted warnings.
   logs: input data for the parser. Logs can be multiline.
+  thresholds: map of parser to threshold count pairs.
 
 Raises:
   StepFailure: error that fails the entire recipe execution.
+  AssertionError: error when parser is not supported.
 ## Recipes
 
 ### *recipes* / [checkout:examples/full](/infra/config/recipe_modules/checkout/examples/full.py)
@@ -151,7 +151,7 @@ Recipe example for script_wrapper recipe_module.
 Recipe to run tests and shows usage of script_wrapper recipe_module.
 Test: ./recipes.py test train --filter script_wrapper
 
-&mdash; **def [RunSteps](/infra/config/recipe_modules/script_wrapper/examples/full.py#36)(api, warning_threshold, logs):**
+&mdash; **def [RunSteps](/infra/config/recipe_modules/script_wrapper/examples/full.py#36)(api, logs, thresholds):**
 ### *recipes* / [try\_builder](/infra/config/recipes/try_builder.py)
 
 [DEPS](/infra/config/recipes/try_builder.py#23): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

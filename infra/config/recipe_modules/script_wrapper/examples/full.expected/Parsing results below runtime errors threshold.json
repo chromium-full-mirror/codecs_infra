@@ -1,0 +1,21 @@
+[
+  {
+    "cmd": [
+      "echo",
+      "Parsing runtime errors. Threshold: 10 runtime errors"
+    ],
+    "name": "Parsing runtime errors",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@runtime errors@Parser found 2 runtime errors during the build.@@@",
+      "@@@STEP_LOG_LINE@runtime errors@Max threshold is 10 runtime errors.@@@",
+      "@@@STEP_LOG_LINE@runtime errors@Filtering 0 runtime errors.@@@",
+      "@@@STEP_LOG_LINE@runtime errors@ ../aom/aom_dsp/x86/synonyms.h:30:28: runtime error: load of misaligned address 0x08ff0b02 for type 'const uint32_t' (aka 'const unsigned int'), which requires 4 byte alignment@@@",
+      "@@@STEP_LOG_LINE@runtime errors@ ../libvpx/test/convolve_test.cc:325:10: runtime error: signed integer overflow: 2147483647 + 1 cannot be represented in type 'int'@@@",
+      "@@@STEP_LOG_END@runtime errors@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
