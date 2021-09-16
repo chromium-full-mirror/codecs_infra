@@ -25,7 +25,7 @@ DEPS = [
     'recipe_engine/context',
 ]
 PROPERTIES = InputProperties
-PYTHON_VERSION_COMPATIBILITY = "PY3"
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 _INFRA_DIRECTORIES = ['infra', 'presubmit']
 
@@ -56,7 +56,7 @@ def RunSteps(api, properties):
 
   # properties.env is ScalarMap {unicode: str} and context accepts
   # dict {str: str}.
-  assert isinstance (properties.env, ScalarMap)
+  assert isinstance(properties.env, ScalarMap)
   env_vars = {str(k): v for k, v in properties.env.items()}
   env_vars['WORKSPACE'] = api.path.mkdtemp(prefix=api.buildbucket.builder_name)
 

@@ -47,7 +47,11 @@ def CommonChecks(input_api, output_api):
   results = []
 
   results.extend(
-      input_api.canned_checks.CheckPatchFormatted(input_api, output_api))
+      input_api.canned_checks.CheckPatchFormatted(
+          input_api,
+          output_api,
+          check_clang_format=False,
+          result_factory=output_api.PresubmitError))
   results.extend(
       input_api.canned_checks.CheckChangeHasNoCrAndHasOnlyOneEol(
           input_api, output_api))
