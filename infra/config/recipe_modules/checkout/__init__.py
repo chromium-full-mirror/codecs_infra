@@ -15,5 +15,6 @@
 DEPS = [
     'depot_tools/git',
     'depot_tools/tryserver',
+    'recipe_engine/scheduler',
 ]
-PYTHON_VERSION_COMPATIBILITY = "PY3"
+PYTHON_VERSION_COMPATIBILITY = 'PY3'

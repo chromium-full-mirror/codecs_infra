@@ -14,18 +14,18 @@
 
 ### *recipe_modules* / [checkout](/infra/config/recipe_modules/checkout)
 
-[DEPS](/infra/config/recipe_modules/checkout/__init__.py#15): [depot\_tools/git][depot_tools/recipe_modules/git], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver]
+[DEPS](/infra/config/recipe_modules/checkout/__init__.py#15): [depot\_tools/git][depot_tools/recipe_modules/git], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler]
 
 #### **class [CheckoutApi](/infra/config/recipe_modules/checkout/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [ensure\_checkout](/infra/config/recipe_modules/checkout/api.py#24)(self, repo=None, ref=None):**
+&mdash; **def [ensure\_checkout](/infra/config/recipe_modules/checkout/api.py#24)(self):**
 ## Recipes
 
 ### *recipes* / [checkout:examples/full](/infra/config/recipe_modules/checkout/examples/full.py)
 
-[DEPS](/infra/config/recipe_modules/checkout/examples/full.py#15): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipe_modules/checkout/examples/full.py#18): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
-&mdash; **def [RunSteps](/infra/config/recipe_modules/checkout/examples/full.py#24)(api):**
+&mdash; **def [RunSteps](/infra/config/recipe_modules/checkout/examples/full.py#28)(api):**
 ### *recipes* / [ci\_builder](/infra/config/recipes/ci_builder.py)
 
 [DEPS](/infra/config/recipes/ci_builder.py#17): [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -48,5 +48,6 @@
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-properties
+[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-scheduler
 [recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/README.recipes.md#recipe_modules-step
 [recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f6ae625286ab3507b2cfeea218398e3435d23027/recipe_engine/recipe_api.py#875

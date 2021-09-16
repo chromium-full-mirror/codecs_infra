@@ -21,12 +21,15 @@ class CheckoutApi(recipe_api.RecipeApi):
   def __init__(self, **kwargs):
     super(CheckoutApi, self).__init__(**kwargs)
 
-  def ensure_checkout(self, repo=None, ref=None):
-    if not ref or not repo:
-      assert self.m.tryserver.is_tryserver
+  def ensure_checkout(self):
+    if self.m.tryserver and self.m.tryserver.is_tryserver:
       assert self.m.tryserver.gerrit_change is not None
       repo = self.m.tryserver.gerrit_change_repo_url
       ref = self.m.tryserver.gerrit_change_fetch_ref
+    else:
+      assert self.m.scheduler.triggers and self.m.scheduler.triggers[0].gitiles
+      repo = self.m.scheduler.triggers[0].gitiles.repo
+      ref = self.m.scheduler.triggers[0].gitiles.ref
 
     assert re.match(r'^https://.*/(codecs|webm)/.*$', repo)
     self.m.git.checkout(repo, ref=ref)

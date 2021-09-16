@@ -12,33 +12,68 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
+                                                                triggers_pb2)
+
 DEPS = [
     'checkout', 'recipe_engine/path', 'recipe_engine/step',
-    'recipe_engine/buildbucket', 'recipe_engine/properties'
+    'recipe_engine/buildbucket', 'recipe_engine/properties',
+    'recipe_engine/scheduler'
 ]
 
-REPO_NAMES = ['codecs/infra', 'webm/libwem']
+REPO_NAMES = ['codecs/infra', 'webm/libwebm']
 
 
-# NOTE: This example shows the usage of checkou module in a recipe.
+# NOTE: This example shows the usage of checkout module in a recipe.
 def RunSteps(api):
   api.checkout.ensure_checkout()
 
 
 def GenTests(api):
-  results = api.test('gerrit checkout for all repos')
+  yield (api.test('Throw AssertionError when empty inputs in a CI build') +
+         api.expect_exception('AssertionError'))
   for repo in REPO_NAMES:
-    results += api.buildbucket.try_build(
-        'repo',
-        'linux',
-        git_repo='https://chromium.googlesource.com/%s' % (repo),
-        change_number=2974332,
-        patch_set=1)
-  yield results
+    git_repo = 'https://chromium.googlesource.com/' + repo
+    yield (api.test('Ensure checkout when try builder is triggered by a %s CL' %
+                    repo) + api.buildbucket.try_build(
+                        project='repo',
+                        bucket='try',
+                        builder='linux',
+                        git_repo=git_repo,
+                        change_number=2974332,
+                        patch_set=1))
+    yield (api.test(
+        'Ensure checkout when ci builder is triggered by %s scheduler' % repo) +
+           api.scheduler(
+               triggers=[
+                   triggers_pb2.Trigger(
+                       id='a',
+                       gitiles=dict(
+                           repo=git_repo,
+                           ref='refs/heads/main',
+                           revision='a' * 40,
+                       ),
+                   ),
+               ],))
 
-  yield (api.test('gerrit with wrong repo') + api.buildbucket.try_build(
-      'repo',
-      'linux',
-      git_repo='https://chromium.googlesource.com/angle',
-      change_number=2974332,
-      patch_set=1) + api.expect_exception('AssertionError'))
+  wrong_repo = 'https://chromium.googlesource.com/angle'
+  yield (api.test('AssertionError when try builder contains the wrong repo') +
+         api.buildbucket.try_build(
+             project='repo',
+             bucket='try',
+             builder='linux',
+             git_repo=wrong_repo,
+             change_number=2974332,
+             patch_set=1) + api.expect_exception('AssertionError'))
+  yield (api.test('AssertionError when ci builder contains the wrong repo') +
+         api.scheduler(
+             triggers=[
+                 triggers_pb2.Trigger(
+                     id='a',
+                     gitiles=dict(
+                         repo=wrong_repo,
+                         ref='refs/heads/main',
+                         revision='a' * 40,
+                     ),
+                 ),
+             ],) + api.expect_exception('AssertionError'))
