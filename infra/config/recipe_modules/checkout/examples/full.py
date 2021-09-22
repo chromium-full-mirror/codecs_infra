@@ -21,6 +21,7 @@ DEPS = [
     'recipe_engine/scheduler'
 ]
 
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 REPO_NAMES = ['codecs/infra', 'webm/libwebm']
 
 

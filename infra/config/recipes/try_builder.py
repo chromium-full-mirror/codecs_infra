@@ -15,6 +15,7 @@
 from recipe_engine.post_process import StepCommandRE, DropExpectation
 
 DEPS = ['recipe_engine/step']
+PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
