@@ -173,3 +173,13 @@ libwebp_try_builder(
         "env": {"EMSDK_DIR": EMSDK_DIR},
     },
 )
+
+# Defines libwebp builds for abidiff with upstream ref.
+libwebp_try_builder(
+    name = "abicheck",
+    recipe = "run_infra_script",
+    properties = {
+        "script_name": "abicheck.sh",
+        "script_arg": [REPO_REFS],
+    },
+)
