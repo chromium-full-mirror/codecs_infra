@@ -70,12 +70,31 @@ _LIBWEBP_COMPILE_TARGETS = [
     "x86_64-w64-mingw32",
 ]
 
+# Exclude builders that are 'Not Configured' in Jenkins configuration matrix
+# https://build.webmproject.org/jenkins/view/webp/job/libwebp__compile/
+_LIBWEBP_COMPILE_EXCLUDED = [
+    "force-aligned-32-shared",
+    "force-aligned-64-shared",
+    "gradle",
+    "gradle-debug",
+    "mips2el-linux-gnu-shared",
+    "mips32dspr2el-linux-gnu-shared",
+    "mips32el-linux-gnu-shared",
+    "mips32r2el-linux-gnu-shared",
+    "mips32r5el-linux-gnu-shared",
+    "mips64r2el-linux-gnu-shared",
+    "mips64r6el-linux-gnu-shared",
+    "native-shared",
+    "wasm-shared",
+]
+
 def _libwebp_compile_builder(
         *,
         name,
         script_name,
         build_types = [],
         compile_targets = [],
+        excluded_builders = [],
         **kwargs):
     """Defines Libwebp compiler builds
 
@@ -84,6 +103,7 @@ def _libwebp_compile_builder(
       script_name: compilation script
       build_types: compilation script build type list
       compile_targets: host platform list
+      excluded_builders: filter list to remove builder from lucicfg
       **kwargs: other keywords args
     """
     builders = []
@@ -96,7 +116,11 @@ def _libwebp_compile_builder(
             else:
                 build_type = ""
 
-            builder_name = "%s-%s%s" % (name, target, build_type)
+            builder_name = target + build_type
+            if builder_name in excluded_builders:
+                continue
+            builder_name = "%s-%s" % (name, builder_name)
+
             properties = {
                 "script_name": script_name,
                 "script_arg": [config, target],
@@ -135,6 +159,7 @@ libwebp_try_builder(
     script_name = "compile.sh",
     build_types = _LIBWEBP_COMPILE_BUILD_TYPES,
     compile_targets = _LIBWEBP_COMPILE_TARGETS,
+    excluded_builders = _LIBWEBP_COMPILE_EXCLUDED,
     recipe = "run_infra_script",
 )
 
