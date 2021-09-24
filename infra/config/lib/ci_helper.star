@@ -33,7 +33,6 @@ def _create_ci_builder(
         category,
         triggered_by,
         execution_timeout = 45 * time.minute,
-        schedule = None,
         **kwargs):
     """Defines a post-submit builder.
 
@@ -46,7 +45,6 @@ def _create_ci_builder(
       triggered_by: agent triggering the build (i.e. git poller, another
           builder)
       execution_timeout: timeout for the builder
-      schedule: cron expression to schedule when the builder should run
       **kwargs: injected keywords
     """
 
@@ -62,7 +60,6 @@ def _create_ci_builder(
         dimensions = dimensions,
         service_account = CI_BUILDER_ACCOUNT,
         execution_timeout = execution_timeout,
-        schedule = schedule,
         triggered_by = triggered_by,
     )
 
@@ -108,12 +105,21 @@ def _setup_builder(
             builder_creator = _create_ci_builder,
             schedule = None,
             **kwargs):
-        # Builder callback
+        """Enclosed build function.
+        Args:
+            name: name suffix for builders created
+            builder_creator: ci builder callback
+            schedule: crontab expression (UTC), when the builder should be
+                triggered
+            **kwargs: args injected to builder_creator
+        """
         dimensions = {
             "os": os,
             "cpu": cpu_arch,
             "pool": "luci.open-codecs.ci",
         }
+
+        # https://chromium.googlesource.com/infra/luci/luci-go/+/refs/heads/main/lucicfg/doc/README.md#schedules_doc
         if schedule:
             scheduled_poller = "%s-%s-poller" % (prefix, name)
             luci.gitiles_poller(
