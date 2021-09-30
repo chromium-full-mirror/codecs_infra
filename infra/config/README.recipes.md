@@ -154,13 +154,13 @@ Test: ./recipes.py test train --filter script_wrapper
 &mdash; **def [RunSteps](/infra/config/recipe_modules/script_wrapper/examples/full.py#36)(api, warning_threshold, logs):**
 ### *recipes* / [try\_builder](/infra/config/recipes/try_builder.py)
 
-[DEPS](/infra/config/recipes/try_builder.py#18): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipes/try_builder.py#19): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Try builder example.
 
-&mdash; **def [RunSteps](/infra/config/recipes/try_builder.py#22)(api):**
+&mdash; **def [RunSteps](/infra/config/recipes/try_builder.py#30)(api):**
 
 [depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9a36d697d8b3a2e7648b9d27358804f6da129395/recipes/README.recipes.md#recipe_modules-git
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9a36d697d8b3a2e7648b9d27358804f6da129395/recipes/README.recipes.md#recipe_modules-tryserver

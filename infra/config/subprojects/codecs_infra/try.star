@@ -66,3 +66,9 @@ codecs_infra_try_builder(
     name = "patch-check",
     builder_creator = _codecs_infra_patch_check,
 )
+
+# Create recipe tests try_builder.
+codecs_infra_try_builder(
+    name = "recipe-tests",
+    recipe = "try_builder",
+)
