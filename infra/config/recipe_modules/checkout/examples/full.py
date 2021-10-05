@@ -11,7 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Recipe example for checkout recipe_module.
 
+Recipe to run tests and shows usage of checkout recipe_module.
+Test: ./recipes.py test train --filter checkout
+"""
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
 

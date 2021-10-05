@@ -3,54 +3,81 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
-  * [checkout](#recipe_modules-checkout) (Python3 ✅)
+  * [checkout](#recipe_modules-checkout) (Python3 ✅) &mdash; Git checkout from Gitiles or Gerrit.
 
 **[Recipes](#Recipes)**
-  * [checkout:examples/full](#recipes-checkout_examples_full) (Python3 ✅)
-  * [ci_builder](#recipes-ci_builder) (Python3 ✅)
-  * [run_infra_script](#recipes-run_infra_script) (Python3 ✅)
-  * [try_builder](#recipes-try_builder) (Python3 ✅)
+  * [checkout:examples/full](#recipes-checkout_examples_full) (Python3 ✅) &mdash; Recipe example for checkout recipe_module.
+  * [ci_builder](#recipes-ci_builder) (Python3 ✅) &mdash; CI builder example.
+  * [run_infra_script](#recipes-run_infra_script) (Python3 ✅) &mdash; Run shell scripts from target repos.
+  * [try_builder](#recipes-try_builder) (Python3 ✅) &mdash; Try builder example.
 ## Recipe Modules
 
 ### *recipe_modules* / [checkout](/infra/config/recipe_modules/checkout)
 
-[DEPS](/infra/config/recipe_modules/checkout/__init__.py#15): [depot\_tools/git][depot_tools/recipe_modules/git], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler]
+[DEPS](/infra/config/recipe_modules/checkout/__init__.py#16): [depot\_tools/git][depot_tools/recipe_modules/git], [depot\_tools/tryserver][depot_tools/recipe_modules/tryserver], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-#### **class [CheckoutApi](/infra/config/recipe_modules/checkout/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Git checkout from Gitiles or Gerrit.
 
-&mdash; **def [ensure\_checkout](/infra/config/recipe_modules/checkout/api.py#24)(self):**
+#### **class [CheckoutApi](/infra/config/recipe_modules/checkout/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Wraps git checkout with Gitiles or Gerrit information.
+
+The checkout module pulls branch and repo data from Gerrit or Gitiles.
+Ensure the builder triggers have any of this information, otherwise it will
+fail.
+  Usage:
+  api.checkout()
+  api.path['checkout']  # repo dir
+
+&mdash; **def [ensure\_checkout](/infra/config/recipe_modules/checkout/api.py#31)(self):**
+
+Checks out repo into api.path['checkout'].
+
+Raises:
+  AssertionError: git checkout is not possible.
 ## Recipes
 
 ### *recipes* / [checkout:examples/full](/infra/config/recipe_modules/checkout/examples/full.py)
 
-[DEPS](/infra/config/recipe_modules/checkout/examples/full.py#18): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipe_modules/checkout/examples/full.py#22): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/infra/config/recipe_modules/checkout/examples/full.py#29)(api):**
+Recipe example for checkout recipe_module.
+
+Recipe to run tests and shows usage of checkout recipe_module.
+Test: ./recipes.py test train --filter checkout
+
+&mdash; **def [RunSteps](/infra/config/recipe_modules/checkout/examples/full.py#33)(api):**
 ### *recipes* / [ci\_builder](/infra/config/recipes/ci_builder.py)
 
-[DEPS](/infra/config/recipes/ci_builder.py#17): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipes/ci_builder.py#18): [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/infra/config/recipes/ci_builder.py#21)(api):**
+CI builder example.
+
+&mdash; **def [RunSteps](/infra/config/recipes/ci_builder.py#22)(api):**
 ### *recipes* / [run\_infra\_script](/infra/config/recipes/run_infra_script.py)
 
-[DEPS](/infra/config/recipes/run_infra_script.py#19): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipes/run_infra_script.py#20): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/infra/config/recipes/run_infra_script.py#41)(api, properties):**
+Run shell scripts from target repos.
+
+&mdash; **def [RunSteps](/infra/config/recipes/run_infra_script.py#42)(api, properties):**
 ### *recipes* / [try\_builder](/infra/config/recipes/try_builder.py)
 
-[DEPS](/infra/config/recipes/try_builder.py#17): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipes/try_builder.py#18): [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/infra/config/recipes/try_builder.py#21)(api):**
+Try builder example.
+
+&mdash; **def [RunSteps](/infra/config/recipes/try_builder.py#22)(api):**
 
 [depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/04d9c83459364333b8f4859559654cd24d032447/recipes/README.recipes.md#recipe_modules-git
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/04d9c83459364333b8f4859559654cd24d032447/recipes/README.recipes.md#recipe_modules-tryserver

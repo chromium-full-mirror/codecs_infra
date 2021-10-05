@@ -17,24 +17,21 @@ See https://dev.chromium.org/developers/how-tos/depottools/presubmit-scripts for
 details on the presubmit API built into depot_tools.
 """
 
-import fnmatch
-import os
-
 USE_PYTHON3 = True
 _CODECS_INFRA_MAX_LINE_LENGTH = 80
 
 
 def _GetFilesToSkip(input_api):
   return list(input_api.DEFAULT_FILES_TO_SKIP) + [
-      r'.*recipes.py$',
+      r".*recipes.py$",
       # Exclude all "...recipe_deps" directories.
       #
       # These directories are created by recipe engine.
       # Each is an independent recipe checkout. If Pylint is run on
       # these, it will hang forever, so we must exclude them.
-      r'^(.*/)?\..*recipe_deps/.*',
+      r"^(.*/)?\..*recipe_deps/.*",
       # Exclude generated files by lucicfg.
-      r'.*/generated/.*\.cfg',
+      r".*/generated/.*\.cfg",
   ]
 
 
@@ -76,14 +73,15 @@ def CommonChecks(input_api, output_api):
   if not input_api.is_windows:
     tests.extend(
         input_api.canned_checks.CheckLucicfgGenOutput(input_api, output_api,
-                                                      'main.star'))
+                                                      "main.star"))
 
   # Run Lucicfg lint.
   results.extend(
       input_api.RunTests([
           input_api.Command(
               name="lucicfg lint",
-              cmd=["lucicfg", "lint", input_api._current_presubmit_path],
+              cmd=["lucicfg", "lint",
+                   input_api.PresubmitLocalPath()],
               kwargs={},
               message=output_api.PresubmitError)
       ]))
@@ -91,7 +89,11 @@ def CommonChecks(input_api, output_api):
   # Run pylint.
   results.extend(
       input_api.canned_checks.RunPylint(
-          input_api, output_api, files_to_skip=_GetFilesToSkip(input_api)))
+          input_api,
+          output_api,
+          files_to_skip=_GetFilesToSkip(input_api),
+          pylintrc=".pylintrc",
+          version="2.6"))
 
   results.extend(input_api.RunTests(tests))
   return results

@@ -11,10 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Run shell scripts from target repos."""
 
 from google.protobuf.internal.containers import ScalarMap
 from PB.recipes.codecs.input_properties import InputProperties
-from recipe_engine.post_process import StepCommandRE, DropExpectation
+from recipe_engine.post_process import StepCommandRE
 
 DEPS = [
     'checkout',
