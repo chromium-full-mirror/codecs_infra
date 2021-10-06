@@ -199,6 +199,7 @@ libwebp_try_builder(
     properties = {
         "script_name": "abicheck.sh",
         "script_arg": [REPO_REFS],
+        "fetch_heads": True,
     },
 )
 

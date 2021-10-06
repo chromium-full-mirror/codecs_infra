@@ -18,6 +18,8 @@ Test: ./recipes.py test train --filter checkout
 """
 from PB.go.chromium.org.luci.scheduler.api.scheduler.v1 import (triggers as
                                                                 triggers_pb2)
+from recipe_engine.post_process import StepCommandRE
+from recipe_engine.recipe_api import Property
 
 DEPS = [
     'checkout', 'recipe_engine/path', 'recipe_engine/step',
@@ -28,10 +30,14 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 REPO_NAMES = ['codecs/infra', 'webm/libwebm']
 
+PROPERTIES = {
+    'fetch_heads': Property(kind=bool, default=False),
+}
+
 
 # NOTE: This example shows the usage of checkout module in a recipe.
-def RunSteps(api):
-  api.checkout.ensure_checkout()
+def RunSteps(api, fetch_heads):
+  api.checkout.ensure_checkout(fetch_heads=fetch_heads)
 
 
 def GenTests(api):
@@ -82,3 +88,14 @@ def GenTests(api):
                      ),
                  ),
              ],) + api.expect_exception('AssertionError'))
+  git_repo = 'https://chromium.googlesource.com/' + REPO_NAMES[0]
+  yield (api.test('git fetch refs/heads when fetch_heads is True') +
+         api.properties(fetch_heads=True) + api.buildbucket.try_build(
+             project='repo',
+             bucket='try',
+             builder='linux',
+             git_repo=git_repo,
+             change_number=2974332,
+             patch_set=1) +
+         api.post_check(StepCommandRE, 'git fetch refs/heads',
+                        ['git', 'fetch', git_repo, '.*']))

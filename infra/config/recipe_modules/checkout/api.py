@@ -28,8 +28,11 @@ class CheckoutApi(recipe_api.RecipeApi):
     api.path['checkout']  # repo dir
   """
 
-  def ensure_checkout(self):
+  def ensure_checkout(self, fetch_heads=False):
     """Checks out repo into api.path['checkout'].
+
+    Args:
+      fetch_heads: fetch refs/heads when flag is True.
 
     Raises:
       AssertionError: git checkout is not possible.
@@ -45,3 +48,9 @@ class CheckoutApi(recipe_api.RecipeApi):
 
     assert re.match(r'^https://.*/(codecs|webm)/.*$', repo)
     self.m.git.checkout(repo, ref=ref)
+    if fetch_heads:
+      self.m.git(
+          'fetch',
+          repo,
+          '+refs/heads/*:refs/heads/*',
+          name='git fetch refs/heads')

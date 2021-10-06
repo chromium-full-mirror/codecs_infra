@@ -44,11 +44,11 @@ def _FindScriptInDir(path, root_dir, script_name):
 
 
 def RunSteps(api, properties):
-  api.step('git checkout', ['echo', 'git checkout'])
-  api.checkout.ensure_checkout()
-
   script_name = properties.script_name
   script_args = list(properties.script_arg)
+  fetch_heads = properties.fetch_heads
+  api.checkout.ensure_checkout(fetch_heads=fetch_heads)
+
   script_found, script_path = _FindScriptInDir(api.path, api.path['checkout'],
                                                script_name)
   warning_threshold = 0

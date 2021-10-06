@@ -33,9 +33,12 @@ fail.
   api.checkout()
   api.path['checkout']  # repo dir
 
-&mdash; **def [ensure\_checkout](/infra/config/recipe_modules/checkout/api.py#31)(self):**
+&mdash; **def [ensure\_checkout](/infra/config/recipe_modules/checkout/api.py#31)(self, fetch_heads=False):**
 
 Checks out repo into api.path['checkout'].
+
+Args:
+  fetch_heads: fetch refs/heads when flag is True.
 
 Raises:
   AssertionError: git checkout is not possible.
@@ -76,7 +79,7 @@ Raises:
 
 ### *recipes* / [checkout:examples/full](/infra/config/recipe_modules/checkout/examples/full.py)
 
-[DEPS](/infra/config/recipe_modules/checkout/examples/full.py#22): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipe_modules/checkout/examples/full.py#24): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -85,7 +88,7 @@ Recipe example for checkout recipe_module.
 Recipe to run tests and shows usage of checkout recipe_module.
 Test: ./recipes.py test train --filter checkout
 
-&mdash; **def [RunSteps](/infra/config/recipe_modules/checkout/examples/full.py#33)(api):**
+&mdash; **def [RunSteps](/infra/config/recipe_modules/checkout/examples/full.py#39)(api, fetch_heads):**
 ### *recipes* / [ci\_builder](/infra/config/recipes/ci_builder.py)
 
 [DEPS](/infra/config/recipes/ci_builder.py#18): [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -23,7 +23,10 @@ message InputProperties {
   // Script args
   repeated string script_arg = 2;
 
+  // Repo fetch refs/heads
+  bool fetch_heads = 3;
+
   // Environment variables
-  map<string, string> env = 3;
+  map<string, string> env = 4;
 }
 
