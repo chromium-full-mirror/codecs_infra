@@ -30,6 +30,7 @@ def _create_ci_builder(
         name,
         recipe,
         dimensions,
+        properties = {},
         category,
         triggered_by,
         execution_timeout = 45 * time.minute,
@@ -42,6 +43,7 @@ def _create_ci_builder(
       recipe: recipe name
       dimensions: dict with os, cpu, and other vm settings
       category: console view category
+      properties: recipe's input properties
       triggered_by: agent triggering the build (i.e. git poller, another
           builder)
       execution_timeout: timeout for the builder
@@ -57,6 +59,7 @@ def _create_ci_builder(
             cipd_package = RECIPE_BUNDLE,
             cipd_version = RECIPE_VERSION,
         ),
+        properties = properties,
         dimensions = dimensions,
         service_account = CI_BUILDER_ACCOUNT,
         execution_timeout = execution_timeout,
