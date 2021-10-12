@@ -21,6 +21,7 @@ from recipe_engine.post_process import StepCommandRE
 
 DEPS = [
     'checkout',
+    'prerequisites',
     'script_wrapper',
     'recipe_engine/buildbucket',
     'recipe_engine/context',
@@ -48,7 +49,7 @@ def RunSteps(api, properties):
   script_args = list(properties.script_arg)
   fetch_heads = properties.fetch_heads
   api.checkout.ensure_checkout(fetch_heads=fetch_heads)
-
+  cipd_paths = api.prerequisites.ensure_tools()
   script_found, script_path = _FindScriptInDir(api.path, api.path['checkout'],
                                                script_name)
   warning_threshold = 0
@@ -66,7 +67,9 @@ def RunSteps(api, properties):
   env_vars = {str(k): v for k, v in properties.env.items()}
   env_vars['WORKSPACE'] = api.path.mkdtemp(prefix=api.buildbucket.builder_name)
 
-  with api.context(cwd=api.path['checkout'], env=env_vars):
+  with api.context(
+      cwd=api.path['checkout'], env=env_vars,
+      env_prefixes={'PATH': cipd_paths}):
     api.step('Script found', ['echo', '%s found.' % script_path])
     with api.step.nest(
         'Running %s %s' % (script_name, ' '.join(script_args)), status='worst'):
@@ -82,6 +85,7 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
+  cipd_path = api.path['cache'].join('cipd_packages')
   try_build = api.buildbucket.try_build(
       'repo',
       'linux',
@@ -89,11 +93,12 @@ def GenTests(api):
       change_number=405009,
       patch_set=1) + api.properties(
           InputProperties(
-              script_name='compile.sh', script_arg=['some', 'args']),
-          env={'PATH': '/opt/android-ndk/:%(PATH)s'})
+              script_name='compile.sh', script_arg=['some', 'args']))
   for infra_dir in _INFRA_DIRECTORIES:
+    infra_path = api.path['checkout'].join(infra_dir, 'compile.sh')
     yield (
         api.test('Infra script does not exist in %s' % infra_dir) + try_build +
+        api.path.exists(cipd_path) +
         api.post_process(StepCommandRE, 'Script not found',
                          ['echo', 'compile.sh not found.']) +
         api.post_process(
@@ -101,7 +106,7 @@ def GenTests(api):
             'Failed to find script, compile.sh, is not a part of this branch',
             ['false']))
     yield (api.test('Infra script does exist in %s' % infra_dir) + try_build +
-           api.path.exists(api.path['checkout'].join(infra_dir, 'compile.sh')) +
+           api.path.exists(cipd_path, infra_path) + api.prerequisites() +
            api.post_process(StepCommandRE, 'Script found',
                             ['echo', '.*/*/compile.sh found.']) +
            api.post_process(StepCommandRE, 'Running compile.sh some args', []) +
@@ -109,11 +114,10 @@ def GenTests(api):
                             'Running compile.sh some args.Run infra script',
                             ['bash', '-xe', '.*/*/compile.sh', 'some', 'args']))
 
-  script_path = api.path.exists(api.path['checkout'].join(
-      _INFRA_DIRECTORIES[0], 'compile.sh'))
+  script_path = api.path['checkout'].join(_INFRA_DIRECTORIES[0], 'compile.sh')
   yield (api.test(
       'Parse warnings from step failure output when infra script fails') +
-         try_build + script_path +
+         try_build + api.path.exists(cipd_path, script_path) +
          api.step_data('Running compile.sh some args.Run infra script',
                        api.raw_io.output('', name='stderr', retcode=1)) +
          api.post_process(StepCommandRE,
@@ -122,7 +126,7 @@ def GenTests(api):
 
   yield (api.test(
       'Parse warnings from step_results output when infra script succeeds') +
-         try_build + script_path +
+         try_build + api.path.exists(cipd_path, script_path) +
          api.step_data('Running compile.sh some args.Run infra script',
                        api.raw_io.output('', name='stderr', retcode=0)) +
          api.post_process(StepCommandRE,

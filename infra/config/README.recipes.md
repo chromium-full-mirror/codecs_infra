@@ -4,11 +4,13 @@
 
 **[Recipe Modules](#Recipe-Modules)**
   * [checkout](#recipe_modules-checkout) (Python3 ✅) &mdash; Git checkout from Gitiles or Gerrit.
+  * [prerequisites](#recipe_modules-prerequisites) (Python3 ✅) &mdash; Recipe module for caching cipd dependencies.
   * [script_wrapper](#recipe_modules-script_wrapper) (Python3 ✅) &mdash; Recipe module for extracting warnings logs.
 
 **[Recipes](#Recipes)**
   * [checkout:examples/full](#recipes-checkout_examples_full) (Python3 ✅) &mdash; Recipe example for checkout recipe_module.
   * [ci_builder](#recipes-ci_builder) (Python3 ✅) &mdash; CI builder example.
+  * [prerequisites:examples/full](#recipes-prerequisites_examples_full) (Python3 ✅) &mdash; Recipe example for prerequisites recipe_module.
   * [run_infra_script](#recipes-run_infra_script) (Python3 ✅) &mdash; Run shell scripts from target repos.
   * [script_wrapper:examples/full](#recipes-script_wrapper_examples_full) (Python3 ✅) &mdash; Recipe example for script_wrapper recipe_module.
   * [try_builder](#recipes-try_builder) (Python3 ✅) &mdash; Try builder example.
@@ -42,6 +44,25 @@ Args:
 
 Raises:
   AssertionError: git checkout is not possible.
+### *recipe_modules* / [prerequisites](/infra/config/recipe_modules/prerequisites)
+
+[DEPS](/infra/config/recipe_modules/prerequisites/__init__.py#18): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe module for caching cipd dependencies.
+
+The module will download and cache cipd packages.
+  DEPS = ['prerequisites', ...]
+  ....
+    api.prerequisites.ensure()
+    assert api.path.exists(api.path['cache_dir'].join('cipd_packages'))
+
+#### **class [PrerequisitesApi](/infra/config/recipe_modules/prerequisites/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Caches builder dependencies.
+
+&mdash; **def [ensure\_tools](/infra/config/recipe_modules/prerequisites/api.py#33)(self):**
 ### *recipe_modules* / [script\_wrapper](/infra/config/recipe_modules/script_wrapper)
 
 [DEPS](/infra/config/recipe_modules/script_wrapper/__init__.py#16): [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -98,15 +119,27 @@ PYTHON_VERSION_COMPATIBILITY: PY3
 CI builder example.
 
 &mdash; **def [RunSteps](/infra/config/recipes/ci_builder.py#22)(api):**
+### *recipes* / [prerequisites:examples/full](/infra/config/recipe_modules/prerequisites/examples/full.py)
+
+[DEPS](/infra/config/recipe_modules/prerequisites/examples/full.py#21): [prerequisites](#recipe_modules-prerequisites), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+PYTHON_VERSION_COMPATIBILITY: PY3
+
+Recipe example for prerequisites recipe_module.
+
+Recipe that runs test examples and shows usage of prerequisites recipe_module.
+Test: ./recipes.py test train --filter prerequisites
+
+&mdash; **def [RunSteps](/infra/config/recipe_modules/prerequisites/examples/full.py#31)(api):**
 ### *recipes* / [run\_infra\_script](/infra/config/recipes/run_infra_script.py)
 
-[DEPS](/infra/config/recipes/run_infra_script.py#22): [checkout](#recipe_modules-checkout), [script\_wrapper](#recipe_modules-script_wrapper), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipes/run_infra_script.py#22): [checkout](#recipe_modules-checkout), [prerequisites](#recipe_modules-prerequisites), [script\_wrapper](#recipe_modules-script_wrapper), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
 Run shell scripts from target repos.
 
-&mdash; **def [RunSteps](/infra/config/recipes/run_infra_script.py#46)(api, properties):**
+&mdash; **def [RunSteps](/infra/config/recipes/run_infra_script.py#47)(api, properties):**
 ### *recipes* / [script\_wrapper:examples/full](/infra/config/recipe_modules/script_wrapper/examples/full.py)
 
 [DEPS](/infra/config/recipe_modules/script_wrapper/examples/full.py#24): [script\_wrapper](#recipe_modules-script_wrapper), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -132,6 +165,7 @@ Try builder example.
 [depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9a36d697d8b3a2e7648b9d27358804f6da129395/recipes/README.recipes.md#recipe_modules-git
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9a36d697d8b3a2e7648b9d27358804f6da129395/recipes/README.recipes.md#recipe_modules-tryserver
 [recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/022d75261ffc4d0a88448bc0adf4201bd7549bc0/README.recipes.md#recipe_modules-buildbucket
+[recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/022d75261ffc4d0a88448bc0adf4201bd7549bc0/README.recipes.md#recipe_modules-cipd
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/022d75261ffc4d0a88448bc0adf4201bd7549bc0/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/022d75261ffc4d0a88448bc0adf4201bd7549bc0/README.recipes.md#recipe_modules-path
 [recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/022d75261ffc4d0a88448bc0adf4201bd7549bc0/README.recipes.md#recipe_modules-properties
