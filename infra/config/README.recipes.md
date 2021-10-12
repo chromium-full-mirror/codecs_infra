@@ -4,13 +4,13 @@
 
 **[Recipe Modules](#Recipe-Modules)**
   * [checkout](#recipe_modules-checkout) (Python3 ✅) &mdash; Git checkout from Gitiles or Gerrit.
-  * [script_wrapper](#recipe_modules-script_wrapper) (Python3 ✅) &mdash; Recipe module for parsing logs and collect warnings.
+  * [script_wrapper](#recipe_modules-script_wrapper) (Python3 ✅) &mdash; Recipe module for extracting warnings logs.
 
 **[Recipes](#Recipes)**
   * [checkout:examples/full](#recipes-checkout_examples_full) (Python3 ✅) &mdash; Recipe example for checkout recipe_module.
   * [ci_builder](#recipes-ci_builder) (Python3 ✅) &mdash; CI builder example.
   * [run_infra_script](#recipes-run_infra_script) (Python3 ✅) &mdash; Run shell scripts from target repos.
-  * [script_wrapper:examples/full](#recipes-script_wrapper_examples_full) (Python3 ✅)
+  * [script_wrapper:examples/full](#recipes-script_wrapper_examples_full) (Python3 ✅) &mdash; Recipe example for script_wrapper recipe_module.
   * [try_builder](#recipes-try_builder) (Python3 ✅) &mdash; Try builder example.
 ## Recipe Modules
 
@@ -41,11 +41,11 @@ Raises:
   AssertionError: git checkout is not possible.
 ### *recipe_modules* / [script\_wrapper](/infra/config/recipe_modules/script_wrapper)
 
-[DEPS](/infra/config/recipe_modules/script_wrapper/__init__.py#15): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipe_modules/script_wrapper/__init__.py#16): [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-Recipe module for parsing logs and collect warnings.
+Recipe module for extracting warnings logs.
 
 The module can inspect plain text or api.step results.
 
@@ -61,13 +61,13 @@ Module that wraps result logs and parses warnings.
 
 &mdash; **def [\_\_call\_\_](/infra/config/recipe_modules/script_wrapper/api.py#36)(self, warning_threshold=0, logs=''):**
 
-Parses logs and collects warnings.
+Extracts warnings from logs.
 
 Fails when warning count is higher than the threshold.
 Changes step.presentation.status to WARNING if warning count is not zero.
 
 Args:
-  warning_threshold: max count of collected warnings.
+  warning_threshold: max count of extracted warnings.
   logs: input data for the parser. Logs can be multiline.
 
 Raises:
@@ -106,11 +106,16 @@ Run shell scripts from target repos.
 &mdash; **def [RunSteps](/infra/config/recipes/run_infra_script.py#46)(api, properties):**
 ### *recipes* / [script\_wrapper:examples/full](/infra/config/recipe_modules/script_wrapper/examples/full.py)
 
-[DEPS](/infra/config/recipe_modules/script_wrapper/examples/full.py#19): [script\_wrapper](#recipe_modules-script_wrapper), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/infra/config/recipe_modules/script_wrapper/examples/full.py#24): [script\_wrapper](#recipe_modules-script_wrapper), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-&mdash; **def [RunSteps](/infra/config/recipe_modules/script_wrapper/examples/full.py#31)(api, warning_threshold, logs):**
+Recipe example for script_wrapper recipe_module.
+
+Recipe to run tests and shows usage of script_wrapper recipe_module.
+Test: ./recipes.py test train --filter script_wrapper
+
+&mdash; **def [RunSteps](/infra/config/recipe_modules/script_wrapper/examples/full.py#36)(api, warning_threshold, logs):**
 ### *recipes* / [try\_builder](/infra/config/recipes/try_builder.py)
 
 [DEPS](/infra/config/recipes/try_builder.py#18): [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -121,13 +126,13 @@ Try builder example.
 
 &mdash; **def [RunSteps](/infra/config/recipes/try_builder.py#22)(api):**
 
-[depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/04d9c83459364333b8f4859559654cd24d032447/recipes/README.recipes.md#recipe_modules-git
-[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/04d9c83459364333b8f4859559654cd24d032447/recipes/README.recipes.md#recipe_modules-tryserver
-[recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-buildbucket
-[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-context
-[recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-path
-[recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-properties
-[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-raw_io
-[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-scheduler
-[recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/README.recipes.md#recipe_modules-step
-[recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5396af331c3ab5b82261ea223c219cfb74454da3/recipe_engine/recipe_api.py#881
+[depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/4a06fb543238f49f674a44be355dde429286fa86/recipes/README.recipes.md#recipe_modules-git
+[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/4a06fb543238f49f674a44be355dde429286fa86/recipes/README.recipes.md#recipe_modules-tryserver
+[recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/2677c06daf0087ce27e489202cd86147494274ef/README.recipes.md#recipe_modules-buildbucket
+[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/2677c06daf0087ce27e489202cd86147494274ef/README.recipes.md#recipe_modules-context
+[recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/2677c06daf0087ce27e489202cd86147494274ef/README.recipes.md#recipe_modules-path
+[recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/2677c06daf0087ce27e489202cd86147494274ef/README.recipes.md#recipe_modules-properties
+[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/2677c06daf0087ce27e489202cd86147494274ef/README.recipes.md#recipe_modules-raw_io
+[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/2677c06daf0087ce27e489202cd86147494274ef/README.recipes.md#recipe_modules-scheduler
+[recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/2677c06daf0087ce27e489202cd86147494274ef/README.recipes.md#recipe_modules-step
+[recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/2677c06daf0087ce27e489202cd86147494274ef/recipe_engine/recipe_api.py#881

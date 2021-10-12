@@ -93,7 +93,7 @@ def CommonChecks(input_api, output_api):
           output_api,
           files_to_skip=_GetFilesToSkip(input_api),
           pylintrc=".pylintrc",
-          version="2.6"))
+          version="2.7"))
 
   results.extend(input_api.RunTests(tests))
   return results
