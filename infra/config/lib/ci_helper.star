@@ -22,7 +22,13 @@ After modifying this file execute ('lucicfg generate main.star') to regenerate
 the configs.
 """
 
-load("//lib/common.star", "CI_BUILDER_ACCOUNT", "RECIPE_BUNDLE", "RECIPE_VERSION")
+load(
+    "//lib/common.star",
+    "CI_BUILDER_ACCOUNT",
+    "CODECS_CIPD_DEPS_MAPPING",
+    "RECIPE_BUNDLE",
+    "RECIPE_VERSION",
+)
 
 def _create_ci_builder(
         *,
@@ -79,18 +85,20 @@ def _setup_builder(
         repo,
         refs,
         *,
-        os = "Ubuntu",
+        category = "Linux|18",
+        cipd_packages = [],
         cpu_arch = "x86-64",
-        category = "Linux|18"):
+        os = "Ubuntu"):
     """Defines defaults for ci builder creation.
 
     Args:
       prefix: prefix name for all builders created from the same setup
       repo: repo which git poller is watching
       refs: refs which git poller is watching
-      os: operating system this builder works with
-      cpu_arch: cpu architecture (e.g. x86-64)
       category: console view category
+      cipd_packages: list of packages for cipd ensure -ensure-file
+      cpu_arch: cpu architecture (e.g. x86-64)
+      os: operating system this builder works with
     """
     git_poller = prefix + "-poller"
 
@@ -107,6 +115,7 @@ def _setup_builder(
             name,
             builder_creator = _create_ci_builder,
             schedule = None,
+            properties = {},
             **kwargs):
         """Enclosed build function.
         Args:
@@ -114,6 +123,7 @@ def _setup_builder(
             builder_creator: ci builder callback
             schedule: crontab expression (UTC), when the builder should be
                 triggered
+            properties
             **kwargs: args injected to builder_creator
         """
         dimensions = {
@@ -121,6 +131,16 @@ def _setup_builder(
             "cpu": cpu_arch,
             "pool": "luci.open-codecs.ci",
         }
+
+        if cipd_packages:
+            cipd_pkg_defs = [CODECS_CIPD_DEPS_MAPPING[k] for k in cipd_packages]
+            properties["$codecs/prerequisites"] = {
+                "cipd_package": cipd_pkg_defs,
+            }
+        else:
+            properties["$codecs/prerequisites"] = {
+                "cipd_package": [],
+            }
 
         # https://chromium.googlesource.com/infra/luci/luci-go/+/refs/heads/main/lucicfg/doc/README.md#schedules_doc
         if schedule:
@@ -141,6 +161,7 @@ def _setup_builder(
             name = name,
             dimensions = dimensions,
             category = category,
+            properties = properties,
             triggered_by = triggered_by,
             schedule = schedule,
             **kwargs

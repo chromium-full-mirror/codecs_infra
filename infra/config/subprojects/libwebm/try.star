@@ -32,6 +32,11 @@ _LIBWEBM_COMPILE_TARGETS = {
     "x86_64-w64-mingw32": "x86_64-w64-mingw32",
 }
 
+# Libwebm builder cipd dependencies.
+_LIBWEBM_CIPD_PACKAGES = [
+    "android-ndk",
+]
+
 # Libwebm compile android configuration matrix.
 _LIBWEBM_COMPILE_ANDROID_BUILD_TYPES = ["release", "debug"]
 _LIBWEBM_COMPILE_ANDROID_TARGETS = {
@@ -51,6 +56,7 @@ def _libwebm_compile_builder(
         script_name,
         build_types = [],
         compile_targets = {},
+        properties = {},
         **kwargs):
     """Defines Libwebm compiler builds
 
@@ -59,6 +65,7 @@ def _libwebm_compile_builder(
       script_name: compilation script
       build_types: compilation script build type list
       compile_targets: host platform to cross-compile map
+      properties: builder's input properties
       **kwargs: other keywords args
     """
     builders = []
@@ -66,19 +73,17 @@ def _libwebm_compile_builder(
         for host, target in compile_targets.items():
             build_type = "-debug" if "debug" in config else ""
             builder_name = "%s-%s%s" % (name, host, build_type)
-            properties = {
+            overridden_properties = {
                 "script_name": script_name,
                 "script_arg": [config, target],
-                "env": {
-                    "PATH": "%(PATH)s:/opt/android-ndk/",
-                },
             }
+            overridden_properties.update(properties)
 
             builders.append(
                 try_helper.create_builder(
                     name = builder_name,
                     os = "linux",
-                    properties = properties,
+                    properties = overridden_properties,
                     **kwargs
                 ),
             )
@@ -90,6 +95,7 @@ def _libwebm_test_builder(
         script_name,
         sanitizers = [],
         test_targets = {},
+        properties = {},
         **kwargs):
     """Defines Libwebm unit test builds
 
@@ -98,22 +104,24 @@ def _libwebm_test_builder(
       script_name: test script
       sanitizers: test script sanitizer list
       test_targets: host platform to cross-compile list
+      properties: builder's input properties
       **kwargs: other keywords args
     """
     builders = []
     for sanitizer in sanitizers:
         for target in test_targets:
             builder_name = "%s-%s-%s" % (name, target, sanitizer)
-            properties = {
+            overridden_properties = {
                 "script_name": script_name,
                 "script_arg": ["%s-%s" % (target, sanitizer)],
             }
+            overridden_properties.update(properties)
 
             builders.append(
                 try_helper.create_builder(
                     name = builder_name,
                     os = "linux",
-                    properties = properties,
+                    properties = overridden_properties,
                     **kwargs
                 ),
             )
@@ -123,6 +131,7 @@ libwebm_try_builder = try_helper.setup_builder(
     prefix = "libwebm",
     repo = LIBWEBM_REPO_URL,
     refs = [REPO_REFS],
+    cipd_packages = _LIBWEBM_CIPD_PACKAGES,
 )
 
 # Defines libwebm builds for unix-based and mingw cross-compiled platforms.

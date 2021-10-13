@@ -28,6 +28,13 @@ load(
 )
 load("//lib/try_helper.star", "try_helper")
 
+# Libwebp builder cipd dependencies.
+_LIBWEBP_CIPD_PACKAGES = [
+    "android-ndk",
+    "mips-img-linux-gnu",
+    "mips-mti-linux-gnu",
+]
+
 # Libwebp compile configuration matrix.
 _LIBWEBP_COMPILE_BUILD_TYPES = ["shared", "static", "static-debug"]
 _LIBWEBP_COMPILE_TARGETS = [
@@ -110,6 +117,7 @@ def _libwebp_compile_builder(
         build_types = [],
         compile_targets = [],
         excluded_builders = [],
+        properties = {},
         **kwargs):
     """Defines Libwebp compiler builds
 
@@ -119,6 +127,7 @@ def _libwebp_compile_builder(
       build_types: compilation script build type list
       compile_targets: host platform list
       excluded_builders: filter list to remove builder from lucicfg
+      properties: builder's input properties
       **kwargs: other keywords args
     """
     builders = []
@@ -134,21 +143,20 @@ def _libwebp_compile_builder(
                 continue
             builder_name = "%s-%s" % (name, builder_name)
 
-            properties = {
+            overridden_properties = {
                 "script_name": script_name,
                 "script_arg": [config, target],
                 "env": {
-                    # %(PATH)s is filled up by recipe
-                    "PATH": "%(PATH)s:" + ANDROID_NDK_DIR,
                     "ANDROID_NDK_DIR": ANDROID_NDK_DIR,
                 },
             }
+            overridden_properties.update(properties)
 
             builders.append(
                 try_helper.create_builder(
                     name = builder_name,
                     os = "linux",
-                    properties = properties,
+                    properties = overridden_properties,
                     **kwargs
                 ),
             )
@@ -158,6 +166,7 @@ libwebp_try_builder = try_helper.setup_builder(
     prefix = "libwebp",
     repo = LIBWEBP_REPO_URL,
     refs = [REPO_REFS],
+    cipd_packages = _LIBWEBP_CIPD_PACKAGES,
 )
 
 # Style-check and patch check builder for libwebp.

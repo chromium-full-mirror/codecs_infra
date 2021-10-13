@@ -32,6 +32,8 @@ class PrerequisitesApi(recipe_api.RecipeApi):
 
   def ensure_tools(self):
     assert 'cache' in self.m.path and self.m.path.exists(self.m.path['cache'])
+    if not self._cipd_packages:
+      return []
     cipd_root = self.m.path['cache'].join('cipd_packages')
     ensure_file = self.m.cipd.EnsureFile()
     cipd_paths = []

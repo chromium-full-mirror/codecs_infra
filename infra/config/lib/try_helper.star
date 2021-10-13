@@ -22,7 +22,13 @@ After modifying this file execute ('lucicfg generate main.star') to regenerate
 the configs.
 """
 
-load("//lib/common.star", "RECIPE_BUNDLE", "RECIPE_VERSION", "TRY_BUILDER_ACCOUNT")
+load(
+    "//lib/common.star",
+    "CODECS_CIPD_DEPS_MAPPING",
+    "RECIPE_BUNDLE",
+    "RECIPE_VERSION",
+    "TRY_BUILDER_ACCOUNT",
+)
 
 def _patch_check_builder(
         *,
@@ -131,29 +137,46 @@ def _setup_builder(
         repo,
         refs,
         *,
-        os = "Ubuntu",
-        cpu_arch = "x86-64",
         category = "Linux|18",
-        execution_timeout = 45 * time.minute):
+        cipd_packages = [],
+        cpu_arch = "x86-64",
+        execution_timeout = 45 * time.minute,
+        os = "Ubuntu"):
     """Defines defaults for try builder creation.
 
     Args:
       prefix: prefix name for all builders created from the same setup
       repo: repo which cq_group is watching
       refs: refs which cq_group is watching
-      os: operating system this builder works with
-      cpu_arch: cpu architecture (e.g. x86-64)
+      cipd_packages: list of packages for cipd ensure -ensure-file
       category: console view category
+      cpu_arch: cpu architecture (e.g. x86-64)
       execution_timeout: timeout for the builder
+      os: operating system this builder works with
     """
     cq_group = prefix + "CQ"
 
-    def build(*, name, builder_creator = _create_try_builder, **kwargs):
+    def build(
+            *,
+            name,
+            builder_creator = _create_try_builder,
+            properties = {},
+            **kwargs):
         dimensions = {
             "os": os,
             "cpu": cpu_arch,
             "pool": "luci.open-codecs.try",
         }
+
+        if cipd_packages:
+            cipd_pkg_defs = [CODECS_CIPD_DEPS_MAPPING[k] for k in cipd_packages]
+            properties["$codecs/prerequisites"] = {
+                "cipd_package": cipd_pkg_defs,
+            }
+        else:
+            properties["$codecs/prerequisites"] = {
+                "cipd_package": [],
+            }
 
         # Builder callback
         builder_creator(
@@ -163,6 +186,7 @@ def _setup_builder(
             dimensions = dimensions,
             category = category,
             execution_timeout = execution_timeout,
+            properties = properties,
             **kwargs
         )
 
