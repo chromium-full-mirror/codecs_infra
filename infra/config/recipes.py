@@ -113,7 +113,8 @@ IS_WIN = sys.platform.startswith(('win', 'cygwin'))
 
 _BAT = '.bat' if IS_WIN else ''
 GIT = 'git' + _BAT
-VPYTHON = ('vpython' + ('3' if os.getenv('RECIPES_USE_PY3') == 'true' else '') +
+VPYTHON = ('vpython' +
+           ('3' if os.getenv('RECIPES_USE_PY3') == 'true' else '') +
            _BAT)
 CIPD = 'cipd' + _BAT
 REQUIRED_BINARIES = {GIT, VPYTHON, CIPD}
