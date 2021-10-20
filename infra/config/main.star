@@ -31,12 +31,19 @@ load(
 # Required depot_tools.
 lucicfg.check_version("1.18.4", "Please update depot_tools")
 
-# Enable LUCI Realms support.
-lucicfg.enable_experiment("crbug.com/1085650")
-luci.builder.defaults.experiments.set({"luci.use_realms": 100})
-
 # Use Buildbucket agent rather than deprecated kitchen.
 luci.recipe.defaults.use_bbagent.set(True)
+
+# Enable experiments
+lucicfg.enable_experiment("crbug.com/1085650")
+luci.builder.defaults.experiments.set(
+    {
+        # Enable LUCI Realms support.
+        "luci.use_realms": 100,
+        # Use python3 on bbagent
+        "luci.recipes.use_python3": 100,
+    },
+)
 
 # lucicfg configuration.
 lucicfg.config(
