@@ -3,7 +3,10 @@
 *.pyc
 __init__.py
 *.expected
+
 !infra/config/recipe_modules/**/__init__.py
+!infra/config/recipe_modules/**/*.expected
+!infra/config/recipes/**/*.expected
 
 # IDEs
 .idea/

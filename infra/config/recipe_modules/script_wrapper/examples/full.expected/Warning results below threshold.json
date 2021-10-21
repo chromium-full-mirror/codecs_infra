@@ -1,0 +1,20 @@
+[
+  {
+    "cmd": [
+      "echo",
+      "Max of 2 warnings"
+    ],
+    "name": "Parsing Warnings",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@warnings@Found 1 warnings during the build.@@@",
+      "@@@STEP_LOG_LINE@warnings@Max threshold is 2 warnings.@@@",
+      "@@@STEP_LOG_LINE@warnings@Skipping 0 files.@@@",
+      "@@@STEP_LOG_LINE@warnings@/b/s/w/ir/k/libwebm/testing/mkvmuxer_tests.cc:142:16: warning: shifting a negative signed value is undefined [-Wshift-negative-value]@@@",
+      "@@@STEP_LOG_END@warnings@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

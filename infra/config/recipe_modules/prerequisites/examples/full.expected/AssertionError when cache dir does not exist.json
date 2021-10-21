@@ -1,0 +1,23 @@
+[
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[codecs]/infra/config/recipe_modules/prerequisites/examples/full.py\", line 32, in RunSteps",
+      "    cipd_paths = api.prerequisites.ensure_tools()",
+      "  File \"RECIPE_REPO[codecs]/infra/config/recipe_modules/prerequisites/api.py\", line 34, in ensure_tools",
+      "    assert 'cache' in self.m.path and self.m.path.exists(self.m.path['cache'])",
+      "AssertionError()"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: AssertionError()"
+    },
+    "name": "$result"
+  }
+]

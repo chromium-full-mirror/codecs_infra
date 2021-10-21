@@ -1,0 +1,18 @@
+[
+  {
+    "cmd": [
+      "echo",
+      "Max of 0 warnings"
+    ],
+    "name": "Parsing Warnings",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@warnings@Found 0 warnings during the build.@@@",
+      "@@@STEP_LOG_LINE@warnings@Max threshold is 0 warnings.@@@",
+      "@@@STEP_LOG_LINE@warnings@Skipping 0 files.@@@",
+      "@@@STEP_LOG_END@warnings@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
