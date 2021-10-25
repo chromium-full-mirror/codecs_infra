@@ -13,7 +13,7 @@
   * [prerequisites:examples/full](#recipes-prerequisites_examples_full) (Python3 ✅) &mdash; Recipe example for prerequisites recipe_module.
   * [run_infra_script](#recipes-run_infra_script) (Python3 ✅) &mdash; Run shell scripts from target repos.
   * [script_wrapper:examples/full](#recipes-script_wrapper_examples_full) (Python3 ✅) &mdash; Recipe example for script_wrapper recipe_module.
-  * [try_builder](#recipes-try_builder) (Python3 ✅) &mdash; Try builder example.
+  * [try_builder](#recipes-try_builder) (Python3 ✅) &mdash; Try builder for codecs/infra.
 ## Recipe Modules
 
 ### *recipe_modules* / [checkout](/infra/config/recipe_modules/checkout)
@@ -154,13 +154,16 @@ Test: ./recipes.py test train --filter script_wrapper
 &mdash; **def [RunSteps](/infra/config/recipe_modules/script_wrapper/examples/full.py#36)(api, warning_threshold, logs):**
 ### *recipes* / [try\_builder](/infra/config/recipes/try_builder.py)
 
-[DEPS](/infra/config/recipes/try_builder.py#19): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipes/try_builder.py#23): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
-Try builder example.
+Try builder for codecs/infra.
 
-&mdash; **def [RunSteps](/infra/config/recipes/try_builder.py#30)(api):**
+Runs recipe tests individually for better inspection. As a requirement, any
+changes in recipes will change the *.expected files.
+
+&mdash; **def [RunSteps](/infra/config/recipes/try_builder.py#34)(api):**
 
 [depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9a36d697d8b3a2e7648b9d27358804f6da129395/recipes/README.recipes.md#recipe_modules-git
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/9a36d697d8b3a2e7648b9d27358804f6da129395/recipes/README.recipes.md#recipe_modules-tryserver

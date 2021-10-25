@@ -18,7 +18,7 @@ changes in recipes will change the *.expected files.
 """
 
 import copy
-from recipe_engine.post_process import StepCommandRE
+from recipe_engine.post_process import StepCommandRE, StatusException
 
 DEPS = [
     'checkout',
@@ -32,10 +32,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  api.step('Checkout codecs infra', ['echo', 'checkout'])
+  api.step('Checkout codecs infra', cmd=None)
   api.checkout.ensure_checkout()
   recipes_dir = api.path['checkout'].join('infra', 'config')
+  api.step('Find recipes.py', cmd=None)
   if not api.path.exists(recipes_dir):
+    api.step.active_result.presentation.status = api.step.EXCEPTION
     raise api.step.InfraFailure('%s does not exist' % recipes_dir)
   with api.context(cwd=recipes_dir):
     api.step('Fetch deps', ['./recipes.py', 'fetch'])
@@ -56,28 +58,27 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield (api.test('infra/config/recipes.py does not exist') +
-         api.buildbucket.try_build(
-             'repo',
-             'linux',
-             git_repo='https://chromium.googlesource.com/codecs/infra',
-             change_number=405009,
-             patch_set=1))
+  try_build = api.buildbucket.try_build(
+      'repo',
+      'linux',
+      git_repo='https://chromium.googlesource.com/codecs/infra',
+      change_number=405009,
+      patch_set=1)
+  yield (api.test('infra/config/recipes.py does not exist') + try_build +
+         api.post_process(StatusException))
   yield (
-      api.test('Run all tests.') + api.buildbucket.try_build(
-          'repo',
-          'linux',
-          git_repo='https://chromium.googlesource.com/codecs/infra',
-          change_number=405009,
-          patch_set=1) + api.path.exists(api.path['checkout'].join(
-              'infra', 'config', 'recipes.py')) +
+      api.test('Run all tests') +
+      try_build + api.path.exists(api.path['checkout'].join(
+          'infra', 'config', 'recipes.py')) + api.step_data(
+              'List tests',
+              stdout=api.raw_io.output(
+                  'checkout:examples/full', name='stdout', retcode=0)) +
       api.post_check(StepCommandRE, 'Fetch deps', ['./recipes.py', 'fetch']) +
       api.post_check(StepCommandRE, 'List tests',
                      ['./recipes.py', 'test', 'list']) +
-      api.post_check(StepCommandRE, 'Run all tests', []) + api.step_data(
-          'List tests',
-          api.raw_io.output((
-              b'checkout:examples/full.AssertionError when ci builder contains '
-              b'the wrong repo\n'),
-                            name='stdout',
-                            retcode=0)))
+      api.post_check(StepCommandRE, 'Run all tests', []) +
+      api.post_check(StepCommandRE, 'Run all tests.Run test checkout:examples/'
+                     'full', [
+                         './recipes.py', 'test', 'run', '--full-stacks',
+                         '--py3-details', '--filter', '.*'
+                     ]))

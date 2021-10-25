@@ -1,21 +1,6 @@
 [
   {
-    "cmd": [
-      "echo",
-      "checkout"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "repo:linux"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
+    "cmd": [],
     "name": "Checkout codecs infra"
   },
   {
@@ -243,6 +228,10 @@
     "name": "submodule update"
   },
   {
+    "cmd": [],
+    "name": "Find recipes.py"
+  },
+  {
     "cmd": [
       "./recipes.py",
       "fetch"
@@ -283,12 +272,41 @@
     },
     "name": "List tests",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output[stdout]@checkout:examples/full@@@",
       "@@@STEP_LOG_END@raw_io.output[stdout]@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Run all tests"
+  },
+  {
+    "cmd": [
+      "./recipes.py",
+      "test",
+      "run",
+      "--full-stacks",
+      "--py3-details",
+      "--filter",
+      "checkout:examples/full"
+    ],
+    "cwd": "[START_DIR]/infra/infra/config",
+    "luci_context": {
+      "realm": {
+        "name": "repo:linux"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Run all tests.Run test checkout:examples/full",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "name": "$result"

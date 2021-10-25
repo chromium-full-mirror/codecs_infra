@@ -1,21 +1,6 @@
 [
   {
-    "cmd": [
-      "echo",
-      "checkout"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "repo:linux"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
+    "cmd": [],
     "name": "Checkout codecs infra"
   },
   {
@@ -241,6 +226,13 @@
       }
     },
     "name": "submodule update"
+  },
+  {
+    "cmd": [],
+    "name": "Find recipes.py",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "failure": {
