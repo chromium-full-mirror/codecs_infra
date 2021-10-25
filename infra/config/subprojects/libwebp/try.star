@@ -110,6 +110,10 @@ _LIBWEBP_COMPILE_ANDROID_TARGETS = [
     "x86_64",
 ]
 
+# Libwebp static analysis configuration list.
+_LIBWEBP_STATIC_ANALYSIS_MODES = ["shallow", "deep"]
+
+# TODO(): Capture index.html output and it will need warning threshold itself.
 def _libwebp_compile_builder(
         *,
         name,
@@ -128,7 +132,7 @@ def _libwebp_compile_builder(
       compile_targets: host platform list
       excluded_builders: filter list to remove builder from lucicfg
       properties: builder's input properties
-      **kwargs: other keywords args
+      **kwargs: other keyword args
     """
     builders = []
     for config in build_types:
@@ -160,6 +164,39 @@ def _libwebp_compile_builder(
                     **kwargs
                 ),
             )
+    return builders
+
+def _libwebp_static_analysis_builder(
+        *,
+        name,
+        scan_build_modes,
+        properties = {},
+        **kwargs):
+    """Defines static analysis builds.
+
+    Args:
+      name: name of builder
+      scan_build_modes: static analysis configuration list
+      properties: builder's input properties
+      **kwargs: other keyword args
+    """
+    builders = []
+    for mode in scan_build_modes:
+        builder_name = "%s-%s" % (name, mode)
+
+        overridden_properties = {
+            "script_name": "run_static_analysis.sh",
+            "script_arg": [mode],
+        }
+        overridden_properties.update(properties)
+        builders.append(
+            try_helper.create_builder(
+                name = builder_name,
+                os = "linux",
+                properties = overridden_properties,
+                **kwargs
+            ),
+        )
     return builders
 
 libwebp_try_builder = try_helper.setup_builder(
@@ -225,5 +262,13 @@ libwebp_try_builder(
     script_name = "compile_android.sh",
     build_types = _LIBWEBP_COMPILE_ANDROID_BUILD_TYPES,
     compile_targets = _LIBWEBP_COMPILE_ANDROID_TARGETS,
+    recipe = "run_infra_script",
+)
+
+# Defines libwebp builds for static analysis.
+libwebp_try_builder(
+    name = "static-analysis",
+    builder_creator = _libwebp_static_analysis_builder,
+    scan_build_modes = _LIBWEBP_STATIC_ANALYSIS_MODES,
     recipe = "run_infra_script",
 )
