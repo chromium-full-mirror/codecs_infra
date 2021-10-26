@@ -72,7 +72,7 @@ def recipe_bundler(name, repo_specs, triggered_by = None):
             name = "recipe_bundler",
             cipd_package =
                 "infra/recipe_bundles/chromium.googlesource.com/infra/infra",
-            cipd_version = "git_revision:e1a6b1a375a07455c00cc236d2b52277aa46ea84",
+            cipd_version = "refs/heads/main",
             use_bbagent = True,
         ),
         dimensions = {
