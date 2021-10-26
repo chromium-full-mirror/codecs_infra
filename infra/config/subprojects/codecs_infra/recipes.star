@@ -22,11 +22,13 @@ the configs.
 # Load from common starlark file.
 load(
     "//lib/common.star",
-    "CIPD_PREFIX",
     "CI_BUILDER_ACCOUNT",
     "CODECS_INFRA_REPO_URL",
     "REPO_REFS",
 )
+
+# Recipe bundler cipd prefix.
+_RECIPE_BUNDLER_CIPD_PREFIX = "infra/recipe_bundles/"
 
 # The Recipes builder list with all cipd bundler builders, referenced below.
 luci.list_view(
@@ -55,9 +57,9 @@ def recipe_bundler(name, repo_specs, triggered_by = None):
         "recipe_bundler_vers": "latest",
         # These control the prefix of the CIPD package names that the tool
         # will create.
-        "package_name_prefix": CIPD_PREFIX,
+        "package_name_prefix": _RECIPE_BUNDLER_CIPD_PREFIX,
         # The CIPD package prefix for internal recipes.
-        "package_name_internal_prefix": CIPD_PREFIX,
+        "package_name_internal_prefix": _RECIPE_BUNDLER_CIPD_PREFIX,
         # Where to grab the recipes to bundle.
         "repo_specs": repo_specs,
     }
