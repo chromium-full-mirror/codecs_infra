@@ -28,7 +28,7 @@ load(
 )
 
 # Recipe bundler cipd prefix.
-_RECIPE_BUNDLER_CIPD_PREFIX = "infra/recipe_bundles/"
+_RECIPE_BUNDLER_CIPD_PREFIX = "infra/recipe_bundles"
 
 # The Recipes builder list with all cipd bundler builders, referenced below.
 luci.list_view(
