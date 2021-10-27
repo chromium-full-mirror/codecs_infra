@@ -47,8 +47,8 @@ CODECS_CIPD_DEPS_MAPPING = {
 
 # CI/Try builder default script parser configurations
 CODECS_DEFAULT_SCRIPT_PARSERS = [
-    {"warnings": {"thresholds": 0}},
-    {"runtime errors": {"thresholds": 0}},
+    {"name": "warnings", "thresholds": 0},
+    {"name": "runtime errors", "thresholds": 0},
 ]
 
 def _set_input_properties(
@@ -67,23 +67,21 @@ def _set_input_properties(
     """
     if cipd_packages:
         cipd_pkg_defs = [CODECS_CIPD_DEPS_MAPPING[k] for k in cipd_packages]
-        properties["$codecs/prerequisites"] = {
-            "cipd_package": cipd_pkg_defs,
-        }
     else:
-        properties["$codecs/prerequisites"] = {
-            "cipd_package": [],
-        }
+        cipd_pkg_defs = []
+
+    properties["$codecs/prerequisites"] = {
+        "cipd_package": cipd_pkg_defs,
+    }
 
     if script_parsers:
         parsers = [{"name": k, "thresholds": v} for k, v in script_parsers]
-        properties["$codecs/script_wrapper"] = {
-            "script_parser": parsers,
-        }
     else:
-        properties["$codecs/script_wrapper"] = {
-            "script_parser": CODECS_DEFAULT_SCRIPT_PARSERS,
-        }
+        parsers = CODECS_DEFAULT_SCRIPT_PARSERS
+
+    properties["$codecs/script_wrapper"] = {
+        "script_parser": parsers,
+    }
 
     return properties
 
