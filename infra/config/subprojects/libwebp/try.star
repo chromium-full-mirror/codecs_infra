@@ -124,7 +124,17 @@ _LIBWEBP_TEST_TARGETS = [
 _LIBWEBP_TEST_EXCLUDED = [
 ]
 
-# TODO(): Capture index.html output and it will need warning threshold itself.
+# Libwebp sanitizer configuration matrix.
+_LIBWEBP_SANITIZER_TARGETS = [
+    "x86_64",
+]
+_LIBWEBP_SANITIZERS = [
+    "address",
+    "thread",
+]
+_LIBWEBP_SANITIZERS_EXCLUDED = []
+
+# TODO(b/204989118): Capture index.html output and it will need warning threshold itself.
 def _libwebp_compile_builder(
         *,
         name,
@@ -208,6 +218,50 @@ def _libwebp_static_analysis_builder(
                 **kwargs
             ),
         )
+    return builders
+
+def _libwebp_sanitizers_builder(
+        *,
+        name,
+        script_name,
+        compile_targets = [],
+        sanitizers = [],
+        excluded_builders = [],
+        properties = {},
+        **kwargs):
+    """Defines Libwebp sanitizer builds
+
+    Args:
+      name: name of builder
+      script_name: compilation script
+      sanitizers: compilation script build type list
+      compile_targets: target platform list
+      excluded_builders: filter list to remove builder from lucicfg
+      properties: builder's input properties
+      **kwargs: other keyword args
+    """
+    builders = []
+    for target in compile_targets:
+        for sanitizer in sanitizers:
+            builder_name = "%s-%s" % (target, sanitizer)
+
+            if builder_name in excluded_builders:
+                continue
+            builder_name = "%s-%s" % (builder_name, name)
+            overridden_properties = {
+                "script_name": script_name,
+                "script_arg": [target, sanitizer],
+            }
+            overridden_properties.update(properties)
+
+            builders.append(
+                try_helper.create_builder(
+                    name = builder_name,
+                    os = "linux",
+                    properties = overridden_properties,
+                    **kwargs
+                ),
+            )
     return builders
 
 libwebp_try_builder = try_helper.setup_builder(
@@ -295,5 +349,16 @@ libwebp_try_builder(
     build_types = _LIBWEBP_TEST_BUILD_TYPES,
     compile_targets = _LIBWEBP_TEST_TARGETS,
     excluded_builders = _LIBWEBP_TEST_EXCLUDED,
+    recipe = "run_infra_script",
+)
+
+# Defines libwebp sanitizers.
+libwebp_try_builder(
+    name = "sanitizer",
+    builder_creator = _libwebp_sanitizers_builder,
+    script_name = "run_sanitizer_tests.sh",
+    compile_targets = _LIBWEBP_SANITIZER_TARGETS,
+    sanitizers = _LIBWEBP_SANITIZERS,
+    excluded_builders = _LIBWEBP_SANITIZERS_EXCLUDED,
     recipe = "run_infra_script",
 )
