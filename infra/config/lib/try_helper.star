@@ -24,10 +24,10 @@ the configs.
 
 load(
     "//lib/common.star",
-    "CODECS_CIPD_DEPS_MAPPING",
     "RECIPE_BUNDLE",
     "RECIPE_VERSION",
     "TRY_BUILDER_ACCOUNT",
+    "common_helper",
 )
 
 def _patch_check_builder(
@@ -148,8 +148,8 @@ def _setup_builder(
       prefix: prefix name for all builders created from the same setup
       repo: repo which cq_group is watching
       refs: refs which cq_group is watching
-      cipd_packages: list of packages for cipd ensure -ensure-file
       category: console view category
+      cipd_packages: list of packages for cipd ensure -ensure-file
       cpu_arch: cpu architecture (e.g. x86-64)
       execution_timeout: timeout for the builder
       os: operating system this builder works with
@@ -168,15 +168,11 @@ def _setup_builder(
             "pool": "luci.open-codecs.try",
         }
 
-        if cipd_packages:
-            cipd_pkg_defs = [CODECS_CIPD_DEPS_MAPPING[k] for k in cipd_packages]
-            properties["$codecs/prerequisites"] = {
-                "cipd_package": cipd_pkg_defs,
-            }
-        else:
-            properties["$codecs/prerequisites"] = {
-                "cipd_package": [],
-            }
+        input_properties = common_helper.set_input_properties(
+            properties = properties,
+            cipd_packages = cipd_packages,
+            **kwargs
+        )
 
         # Builder callback
         builder_creator(
@@ -186,7 +182,7 @@ def _setup_builder(
             dimensions = dimensions,
             category = category,
             execution_timeout = execution_timeout,
-            properties = properties,
+            properties = input_properties,
             **kwargs
         )
 

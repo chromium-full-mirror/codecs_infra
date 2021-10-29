@@ -47,7 +47,7 @@ class Parser(object):
 class ScriptWrapperApi(recipe_api.RecipeApi):
   """Module that wraps result logs and parses warnings and runtime errors."""
 
-  def __init__(self, **kwargs):
+  def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
     self._parsers = {
         parser.name: parser for parser in [
@@ -61,27 +61,26 @@ class ScriptWrapperApi(recipe_api.RecipeApi):
                            re.MULTILINE)),
         ]
     }
+    self._parser_properties = properties.script_parser
 
-  def __call__(self, logs, thresholds=None):
+  def __call__(self, logs):
     """Extracts warnings and/or runtime errors from logs.
 
     Fails the recipe when the parser match count is higher than the threshold.
 
     Args:
       logs: input data for the parser. Logs can be multiline.
-      thresholds: map of parser to threshold count pairs.
 
     Raises:
       StepFailure: error that fails the entire recipe execution.
       AssertionError: error when parser is not supported.
     """
-    if not thresholds:
-      return
     parsing_errors = []
-    for parser, threshold in thresholds.items():
-      assert parser in self._parsers.keys()
+    for parser in self._parser_properties:
+      assert parser.name in self._parsers.keys()
       parsing_errors.extend(
-          self._does_exceed_threshold(logs, self._parsers[parser], threshold))
+          self._does_exceed_threshold(logs, self._parsers[parser.name],
+                                      parser.threshold))
 
     if parsing_errors:
       # StepFailure exception is needed to fail the recipe.

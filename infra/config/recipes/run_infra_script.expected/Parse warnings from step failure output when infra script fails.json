@@ -248,10 +248,7 @@
   },
   {
     "cmd": [],
-    "name": "Running compile.sh some args",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "Running compile.sh some args"
   },
   {
     "cmd": [
@@ -281,8 +278,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output[stdout]@@@",
-      "@@@STEP_LOG_END@raw_io.output[stderr]@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LOG_END@raw_io.output[stderr]@@@"
     ]
   },
   {
@@ -316,40 +312,6 @@
     ]
   },
   {
-    "cmd": [
-      "echo",
-      "Parsing runtime errors. Threshold: 0 runtime errors"
-    ],
-    "cwd": "[START_DIR]/libwebm",
-    "env": {
-      "WORKSPACE": "[CLEANUP]/builder_tmp_1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "repo:linux"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Running compile.sh some args.Parsing runtime errors",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@runtime errors@Parser found 0 runtime errors during the build.@@@",
-      "@@@STEP_LOG_LINE@runtime errors@Max threshold is 0 runtime errors.@@@",
-      "@@@STEP_LOG_LINE@runtime errors@Filtering 0 runtime errors.@@@",
-      "@@@STEP_LOG_END@runtime errors@@@"
-    ]
-  },
-  {
-    "failure": {
-      "failure": {},
-      "humanReason": "Step('Running compile.sh some args.Run infra script') (retcode: 1)"
-    },
     "name": "$result"
   }
 ]

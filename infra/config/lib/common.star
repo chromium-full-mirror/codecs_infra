@@ -44,3 +44,50 @@ CODECS_CIPD_DEPS_MAPPING = {
         "dest": "mips-mti-linux-gnu/bin",
     },
 }
+
+# CI/Try builder default script parser configurations
+CODECS_DEFAULT_SCRIPT_PARSERS = [
+    {"warnings": {"thresholds": 0}},
+    {"runtime errors": {"thresholds": 0}},
+]
+
+def _set_input_properties(
+        *,
+        cipd_packages = [],
+        script_parsers = [],
+        properties = {},
+        **kwargs):
+    """Defines input properties.
+
+    Args:
+      properties: input properties
+      cipd_packages: list of packages for cipd ensure -ensure-file
+      script_parsers: list of script parser configurations
+      **kwargs: injected keywords
+    """
+    if cipd_packages:
+        cipd_pkg_defs = [CODECS_CIPD_DEPS_MAPPING[k] for k in cipd_packages]
+        properties["$codecs/prerequisites"] = {
+            "cipd_package": cipd_pkg_defs,
+        }
+    else:
+        properties["$codecs/prerequisites"] = {
+            "cipd_package": [],
+        }
+
+    if script_parsers:
+        parsers = [{"name": k, "thresholds": v} for k, v in script_parsers]
+        properties["$codecs/script_wrapper"] = {
+            "script_parser": parsers,
+        }
+    else:
+        properties["$codecs/script_wrapper"] = {
+            "script_parser": CODECS_DEFAULT_SCRIPT_PARSERS,
+        }
+
+    return properties
+
+# Public API exposed
+common_helper = struct(
+    set_input_properties = _set_input_properties,
+)

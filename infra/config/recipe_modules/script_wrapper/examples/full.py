@@ -28,13 +28,13 @@ DEPS = [
 
 PROPERTIES = {
     'logs': Property(kind=str, default=''),
-    'thresholds': Property(kind=dict, default=None)
 }
+
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
-def RunSteps(api, logs, thresholds):
-  api.script_wrapper(logs=logs, thresholds=thresholds)
+def RunSteps(api, logs):
+  api.script_wrapper(logs=logs)
 
 
 def GenTests(api):
@@ -66,33 +66,45 @@ def GenTests(api):
       " ../libvpx/test/convolve_test.cc:325:10: runtime error: signed integer "
       "overflow: 2147483647 + 1 cannot be represented in type 'int'\n")
 
-  yield api.test('Empty results')
+  yield api.test('Empty results') + api.script_wrapper()
+
+  invalid_parser = {'name': 'invalid', 'threshold': 0}
   yield (api.test('Throw AssertionError when parser threshold is invalid') +
-         api.properties(logs=valid_warning_logs, thresholds={'invalid': 0}) +
+         api.properties(logs=valid_warning_logs) +
+         api.script_wrapper(script_parsers=[invalid_parser]) +
          api.expect_exception('AssertionError'))
 
-  parametrized_input = {
+  parameterized_input = {
       'warnings': [invalid_warning_logs, valid_warning_logs],
       'runtime errors': [invalid_runtime_error_logs, valid_runtime_error_logs]
   }
 
-  for parser, logs in parametrized_input.items():
+  for parser, logs in parameterized_input.items():
     step_name = 'Parsing ' + parser
     fmt = {'parser': parser}
     invalid_logs = logs[0]
     valid_logs = logs[1]
 
+    parsers = [
+        {
+            'name': parser,
+            'threshold': 0
+        },
+    ]
     yield (
         api.test('Parsing 0 %(parser)s results' % fmt) +
-        api.properties(logs=invalid_logs, thresholds={parser: 0}) +
+        api.properties(logs=invalid_logs) +
+        api.script_wrapper(script_parsers=parsers) +
         api.post_check(CheckLogsDontContain, parser, step_name,
                        invalid_logs.splitlines()[1]) +
         api.post_check(StepCommandRE, step_name, [
             'echo', 'Parsing %(parser)s. Threshold: 0 %(parser)s' % fmt
         ]) + api.post_process(StepSuccess, step_name))
 
+    parsers[0]['threshold'] = 10
     yield (api.test('Parsing results below %(parser)s threshold' % fmt) +
-           api.properties(logs=valid_logs, thresholds={parser: 10}) +
+           api.properties(logs=valid_logs) +
+           api.script_wrapper(script_parsers=parsers) +
            api.post_check(CheckLogsContain, parser, step_name,
                           valid_logs.splitlines()[1]) +
            api.post_check(
@@ -101,9 +113,11 @@ def GenTests(api):
                 'Parsing %(parser)s. Threshold: 10 %(parser)s' % fmt]) +
            api.post_process(StepWarning, step_name))
 
+    parsers[0]['threshold'] = 0
     yield (
         api.test('Parsing results above %(parser)s threshold' % fmt) +
-        api.properties(logs=valid_logs, thresholds={parser: 0}) +
+        api.properties(logs=valid_logs) +
+        api.script_wrapper(script_parsers=parsers) +
         api.post_check(CheckLogsContain, parser, step_name,
                        valid_logs.splitlines()[1]) +
         api.post_check(StepCommandRE, step_name, [
@@ -115,10 +129,14 @@ def GenTests(api):
       valid_warning_logs, invalid_warning_logs, valid_runtime_error_logs,
       invalid_runtime_error_logs
   ])
+
+  parsers = [{
+      'name': k,
+      'threshold': 0
+  } for k, _ in parameterized_input.items()]
   yield (api.test('Throw StepFailure if any parser finds matches') +
-         api.properties(
-             logs=all_logs,
-             thresholds={k: 0 for k, _ in parametrized_input.items()}) +
+         api.properties(logs=all_logs) +
+         api.script_wrapper(script_parsers=parsers) +
          api.post_process(StepFailure, 'Parsing warnings') +
          api.post_process(StepFailure, 'Parsing runtime errors') +
          api.post_process(StatusFailure))
@@ -141,9 +159,10 @@ def GenTests(api):
       " cannot be represented in type 'unsigned long'")
 
   fmt = {'parser': 'runtime errors', 'skips': 5}
+  runtime_parser = {'name': 'runtime errors', 'threshold': 0}
   yield (api.test('Exclude all logs matching exclude_filter') +
-         api.properties(logs=exclude_logs, thresholds={'runtime errors': 0}) +
-         api.post_check(
+         api.properties(logs=exclude_logs) +
+         api.script_wrapper(script_parsers=[runtime_parser]) + api.post_check(
              CheckLogsDontContain, 'runtime errors', 'Parsing runtime errors',
              exclude_logs.splitlines()[1]) + api.post_check(
                  CheckLogsContain, 'runtime errors', 'Parsing runtime errors',

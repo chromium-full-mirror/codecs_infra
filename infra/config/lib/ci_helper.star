@@ -25,9 +25,9 @@ the configs.
 load(
     "//lib/common.star",
     "CI_BUILDER_ACCOUNT",
-    "CODECS_CIPD_DEPS_MAPPING",
     "RECIPE_BUNDLE",
     "RECIPE_VERSION",
+    "common_helper",
 )
 
 def _create_ci_builder(
@@ -123,7 +123,7 @@ def _setup_builder(
             builder_creator: ci builder callback
             schedule: crontab expression (UTC), when the builder should be
                 triggered
-            properties
+            properties: input properties
             **kwargs: args injected to builder_creator
         """
         dimensions = {
@@ -132,15 +132,10 @@ def _setup_builder(
             "pool": "luci.open-codecs.ci",
         }
 
-        if cipd_packages:
-            cipd_pkg_defs = [CODECS_CIPD_DEPS_MAPPING[k] for k in cipd_packages]
-            properties["$codecs/prerequisites"] = {
-                "cipd_package": cipd_pkg_defs,
-            }
-        else:
-            properties["$codecs/prerequisites"] = {
-                "cipd_package": [],
-            }
+        input_properties = common_helper.set_input_properties(
+            properties = properties,
+            **kwargs
+        )
 
         # https://chromium.googlesource.com/infra/luci/luci-go/+/refs/heads/main/lucicfg/doc/README.md#schedules_doc
         if schedule:

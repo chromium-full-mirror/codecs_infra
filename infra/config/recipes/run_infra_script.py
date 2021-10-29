@@ -52,10 +52,6 @@ def RunSteps(api, properties):
   cipd_paths = api.prerequisites.ensure_tools()
   script_found, script_path = _FindScriptInDir(api.path, api.path['checkout'],
                                                script_name)
-  parser_thresholds = {
-      'warnings': 0,
-      'runtime errors': 0,
-  }
 
   if not script_found:
     api.step('Script not found', ['echo', '%s not found.' % script_name])
@@ -83,7 +79,7 @@ def RunSteps(api, properties):
             stderr=api.raw_io.output(name='stderr', add_output_log=True))
       finally:
         step_stdout = copy.copy(api.step.active_result.stderr)
-        api.script_wrapper(logs=step_stdout, thresholds=parser_thresholds)
+        api.script_wrapper(logs=step_stdout)
 
 
 def GenTests(api):
@@ -117,11 +113,13 @@ def GenTests(api):
                             ['bash', '-xe', '.*/*/compile.sh', 'some', 'args']))
 
   script_path = api.path['checkout'].join(_INFRA_DIRECTORIES[0], 'compile.sh')
+  script_parsers = [{'name': 'warnings', 'threshold': 0}]
   yield (api.test(
       'Parse warnings from step failure output when infra script fails') +
          try_build + api.path.exists(cipd_path, script_path) +
-         api.step_data('Running compile.sh some args.Run infra script',
-                       api.raw_io.output('', name='stderr', retcode=1)) +
+         api.script_wrapper(script_parsers=script_parsers) + api.step_data(
+             'Running compile.sh some args.Run infra script',
+             stderr=api.raw_io.output('', name='stderr', retcode=1)) +
          api.post_process(StepCommandRE,
                           'Running compile.sh some args.Parsing warnings',
                           ['echo', 'Parsing warnings. Threshold: 0 warnings']))
@@ -129,8 +127,9 @@ def GenTests(api):
   yield (api.test(
       'Parse warnings from step_results output when infra script succeeds') +
          try_build + api.path.exists(cipd_path, script_path) +
-         api.step_data('Running compile.sh some args.Run infra script',
-                       api.raw_io.output('', name='stderr', retcode=0)) +
+         api.script_wrapper(script_parsers=script_parsers) + api.step_data(
+             'Running compile.sh some args.Run infra script',
+             stderr=api.raw_io.output('', name='stderr', retcode=0)) +
          api.post_process(StepCommandRE,
                           'Running compile.sh some args.Parsing warnings',
                           ['echo', 'Parsing warnings. Threshold: 0 warnings']))

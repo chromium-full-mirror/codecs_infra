@@ -16,11 +16,11 @@
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in _invoke_with_properties",
       "    return callable_obj(*props, **additional_args)",
       "  File \"RECIPE_REPO[codecs]/infra/config/recipe_modules/script_wrapper/examples/full.py\", line 37, in RunSteps",
-      "    api.script_wrapper(logs=logs, thresholds=thresholds)",
+      "    api.script_wrapper(logs=logs)",
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/recipe_api.py\", in _inner",
       "    return func(*a, **kw)",
-      "  File \"RECIPE_REPO[codecs]/infra/config/recipe_modules/script_wrapper/api.py\", line 82, in __call__",
-      "    assert parser in self._parsers.keys()",
+      "  File \"RECIPE_REPO[codecs]/infra/config/recipe_modules/script_wrapper/api.py\", line 80, in __call__",
+      "    assert parser.name in self._parsers.keys()",
       "AssertionError()"
     ]
   },

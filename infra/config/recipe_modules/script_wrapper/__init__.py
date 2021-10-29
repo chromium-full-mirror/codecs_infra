@@ -13,7 +13,11 @@
 # limitations under the License.
 """script_wrapper recipe module deps."""
 
+from PB.recipe_modules.codecs.script_wrapper.properties import InputProperties
+
 DEPS = [
+    'recipe_engine/properties',
     'recipe_engine/step',
 ]
+PROPERTIES = InputProperties
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

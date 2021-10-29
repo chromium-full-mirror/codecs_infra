@@ -65,7 +65,7 @@ Caches builder dependencies.
 &mdash; **def [ensure\_tools](/infra/config/recipe_modules/prerequisites/api.py#33)(self):**
 ### *recipe_modules* / [script\_wrapper](/infra/config/recipe_modules/script_wrapper)
 
-[DEPS](/infra/config/recipe_modules/script_wrapper/__init__.py#16): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/infra/config/recipe_modules/script_wrapper/__init__.py#18): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 PYTHON_VERSION_COMPATIBILITY: PY3
 
@@ -83,7 +83,7 @@ The module can inspect plain text or api.step results.
 
 Module that wraps result logs and parses warnings and runtime errors.
 
-&mdash; **def [\_\_call\_\_](/infra/config/recipe_modules/script_wrapper/api.py#65)(self, logs, thresholds=None):**
+&mdash; **def [\_\_call\_\_](/infra/config/recipe_modules/script_wrapper/api.py#66)(self, logs):**
 
 Extracts warnings and/or runtime errors from logs.
 
@@ -91,7 +91,6 @@ Fails the recipe when the parser match count is higher than the threshold.
 
 Args:
   logs: input data for the parser. Logs can be multiline.
-  thresholds: map of parser to threshold count pairs.
 
 Raises:
   StepFailure: error that fails the entire recipe execution.
@@ -151,7 +150,7 @@ Recipe example for script_wrapper recipe_module.
 Recipe to run tests and shows usage of script_wrapper recipe_module.
 Test: ./recipes.py test train --filter script_wrapper
 
-&mdash; **def [RunSteps](/infra/config/recipe_modules/script_wrapper/examples/full.py#36)(api, logs, thresholds):**
+&mdash; **def [RunSteps](/infra/config/recipe_modules/script_wrapper/examples/full.py#36)(api, logs):**
 ### *recipes* / [try\_builder](/infra/config/recipes/try_builder.py)
 
 [DEPS](/infra/config/recipes/try_builder.py#23): [checkout](#recipe_modules-checkout), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
