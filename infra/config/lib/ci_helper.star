@@ -37,6 +37,7 @@ def _create_ci_builder(
         recipe,
         dimensions,
         properties = {},
+        caches = [],
         category,
         triggered_by,
         execution_timeout = 45 * time.minute,
@@ -48,6 +49,7 @@ def _create_ci_builder(
       name: builder name
       recipe: recipe name
       dimensions: dict with os, cpu, and other vm settings
+      caches: list of caches
       category: console view category
       properties: recipe's input properties
       triggered_by: agent triggering the build (i.e. git poller, another
@@ -60,6 +62,7 @@ def _create_ci_builder(
     luci.builder(
         name = builder_name,
         bucket = "ci",
+        caches = caches,
         executable = luci.recipe(
             name = recipe,
             cipd_package = RECIPE_BUNDLE,
@@ -101,6 +104,10 @@ def _setup_builder(
       os: operating system this builder works with
     """
     git_poller = prefix + "-poller"
+    caches = [swarming.cache(
+        "cipd_packages",
+        name = "ci_" + prefix.replace(r"-", "_"),
+    )]
 
     # The gitiles poller: a source of commits that trigger CI builders.
     luci.gitiles_poller(
@@ -155,6 +162,7 @@ def _setup_builder(
             prefix = prefix,
             name = name,
             dimensions = dimensions,
+            caches = caches,
             category = category,
             properties = properties,
             triggered_by = triggered_by,

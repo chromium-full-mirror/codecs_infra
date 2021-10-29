@@ -90,6 +90,7 @@ def _create_try_builder(
         cq_group,
         dimensions,
         properties = {},
+        caches = [],
         execution_timeout = 45 * time.minute,
         **kwargs):
     """Defines a pre-submit builder.
@@ -101,6 +102,7 @@ def _create_try_builder(
       recipe: recipe name
       dimensions: dict with os, cpu, and other vm settings
       properties: recipe's input properties
+      caches: list of caches
       execution_timeout: timeout for the builder
       **kwargs: injected keywords
     """
@@ -109,6 +111,7 @@ def _create_try_builder(
     luci.builder(
         name = builder_name,
         bucket = "try",
+        caches = caches,
         executable = luci.recipe(
             name = recipe,
             cipd_package = RECIPE_BUNDLE,
@@ -155,6 +158,10 @@ def _setup_builder(
       os: operating system this builder works with
     """
     cq_group = prefix + "CQ"
+    caches = [swarming.cache(
+        "cipd_packages",
+        name = "try_" + prefix.replace(r"-", "_"),
+    )]
 
     def build(
             *,
@@ -181,8 +188,9 @@ def _setup_builder(
             name = name,
             dimensions = dimensions,
             category = category,
+            caches = caches,
             execution_timeout = execution_timeout,
-            properties = input_properties,
+            properties = properties,
             **kwargs
         )
 
