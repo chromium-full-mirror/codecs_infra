@@ -89,6 +89,7 @@ def _libwebp_sanitizers_builder(
 
 libwebp_ci_builder = ci_helper.setup_builder(
     prefix = "libwebp",
+    email_list = ["jzern@google.com"],
     repo = LIBWEBP_REPO_URL,
     refs = [REPO_REFS],
 )

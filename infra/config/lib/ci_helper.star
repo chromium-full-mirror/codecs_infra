@@ -36,6 +36,7 @@ def _create_ci_builder(
         name,
         recipe,
         dimensions,
+        email_notifier,
         properties = {},
         caches = [],
         category,
@@ -49,6 +50,7 @@ def _create_ci_builder(
       name: builder name
       recipe: recipe name
       dimensions: dict with os, cpu, and other vm settings
+      email_notifier: builder email notifier for publishing build status
       caches: list of caches
       category: console view category
       properties: recipe's input properties
@@ -70,6 +72,7 @@ def _create_ci_builder(
         ),
         properties = properties,
         dimensions = dimensions,
+        notifies = [email_notifier],
         service_account = CI_BUILDER_ACCOUNT,
         execution_timeout = execution_timeout,
         triggered_by = triggered_by,
@@ -91,6 +94,7 @@ def _setup_builder(
         category = "Linux|18",
         cipd_packages = [],
         cpu_arch = "x86-64",
+        email_list = None,
         os = "Ubuntu"):
     """Defines defaults for ci builder creation.
 
@@ -101,6 +105,7 @@ def _setup_builder(
       category: console view category
       cipd_packages: list of packages for cipd ensure -ensure-file
       cpu_arch: cpu architecture (e.g. x86-64)
+      email_list: notify to this list of emails when ci builder fails.
       os: operating system this builder works with
     """
     git_poller = prefix + "-poller"
@@ -115,6 +120,21 @@ def _setup_builder(
         bucket = "ci",
         repo = repo,
         refs = refs,
+    )
+
+    email_notifier = prefix + "-notifier"
+
+    # Send email when CI builder fails.
+    # Template definition:
+    # https://source.chromium.org/chromium/infra/infra/+/master:go/src/go.chromium.org/luci/luci_notify/api/config/notify.proto?q=TemplateInput&ss=chromium
+    luci.notifier(
+        name = email_notifier,
+        on_occurrence = ["FAILURE", "INFRA_FAILURE"],
+        notify_emails = email_list,
+        template = luci.notifier_template(
+            name = "email",
+            body = io.read_file("//templates/email.template"),
+        ),
     )
 
     def build(
@@ -161,9 +181,10 @@ def _setup_builder(
         builder_creator(
             prefix = prefix,
             name = name,
-            dimensions = dimensions,
             caches = caches,
             category = category,
+            dimensions = dimensions,
+            email_notifier = email_notifier,
             properties = properties,
             triggered_by = triggered_by,
             schedule = schedule,

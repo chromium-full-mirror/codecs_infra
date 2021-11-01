@@ -1,0 +1,3 @@
+{{.Build.Builder}} - Build {{.Build.Number}} - {{.Build.Status}}!
+
+<a href="https://ci.chromium.org/b/{{.Build.Id}}">Build {{.Build.Number}}</a>

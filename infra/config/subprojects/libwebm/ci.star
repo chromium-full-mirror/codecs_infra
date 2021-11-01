@@ -26,6 +26,7 @@ libwebm_ci_builder = ci_helper.setup_builder(
     prefix = "libwebm",
     repo = LIBWEBM_REPO_URL,
     refs = [REPO_REFS],
+    email_list = ["vpx-eng@google.com"],
 )
 
 libwebm_ci_builder(name = "linux", recipe = "ci_builder")

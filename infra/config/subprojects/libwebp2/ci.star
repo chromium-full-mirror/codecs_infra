@@ -26,6 +26,7 @@ libwebp2_ci_builder = ci_helper.setup_builder(
     prefix = "libwebp2",
     repo = LIBWEBP2_REPO_URL,
     refs = [REPO_REFS],
+    email_list = ["vpx-eng@google.com"],
 )
 
 libwebp2_ci_builder(name = "linux", recipe = "ci_builder")

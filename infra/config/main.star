@@ -48,7 +48,7 @@ luci.builder.defaults.experiments.set(
 # lucicfg configuration.
 lucicfg.config(
     config_dir = "generated",
-    tracked_files = ["*.cfg"],
+    tracked_files = ["*.cfg", "**/*.template"],
     fail_on_warnings = True,
     lint_checks = [
         "default",
@@ -67,6 +67,7 @@ luci.project(
     buildbucket = "cr-buildbucket.appspot.com",
     logdog = "luci-logdog.appspot.com",
     milo = "luci-milo.appspot.com",
+    notify = "luci-notify.appspot.com",
     scheduler = "luci-scheduler.appspot.com",
     swarming = "chromium-swarm.appspot.com",
     acls = [
