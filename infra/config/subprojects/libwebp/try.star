@@ -116,12 +116,47 @@ _LIBWEBP_STATIC_ANALYSIS_MODES = ["shallow", "deep"]
 # Libwebp test configuration matrix.
 _LIBWEBP_TEST_BUILD_TYPES = [
     "static",
+    "static-debug",
 ]
 _LIBWEBP_TEST_TARGETS = [
-    "i686-w64-mingw32",
-    "x86_64-w64-mingw32",
+    "aarch64-linux-clang",
+    "aarch64-linux-gnu",
+    "arm-linux-gnueabi",
+    "arm-neon-linux-gnueabi",
+    "cmake",
+    "disable-near-lossless",
+    "disable-sse4.1",
+    "disable-stats",
+    "i686-linux-asan",
+    "i686-linux-clang",
+    "i686-linux-gnu",
+    "mips2el-linux-gnu",
+    "mips32dspr2el-linux-gnu",
+    "mips32eb-linux-gnu",
+    "mips32el-linux-gnu",
+    "mips32r2el-linux-gnu",
+    "mips64r2el-linux-gnu",
+    "mips64r6el-linux-gnu",
+    "reduce-csp",
+    "reduce-size",
+    "reduce-size-disable-stats",
+    "visibility-hidden-clang",
+    "visibility-hidden-gnu",
+    "wasm",
+    "x86_64-linux-clang",
+    "x86_64-linux-gnu",
+    "x86_64-linux-msan",
 ]
 _LIBWEBP_TEST_EXCLUDED = [
+    "aarch64-linux-gnu-debug",
+    "arm-linux-gnueabi-debug",
+    "cmake-debug",
+    "mips32eb-linux-gnu-debug",
+    "reduce-size-disable-stats-debug",
+    "visibility-hidden-clang-debug",
+    "visibility-hidden-gnu-debug",
+    "wasm-debug",
+    "x86_64-linux-clang-debug",
 ]
 
 # Libwebp sanitizer configuration matrix.
