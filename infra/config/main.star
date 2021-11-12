@@ -26,6 +26,7 @@ load(
     "//lib/common.star",
     "CODECS_INFRA_REPO_URL",
     "REPO_REFS",
+    "TRY_BUILDER_ACCOUNT",
 )
 
 # Required depot_tools.
@@ -103,6 +104,10 @@ luci.project(
         ),
     ],
     bindings = [
+        luci.binding(
+            roles = "role/configs.validator",
+            users = TRY_BUILDER_ACCOUNT,
+        ),
         luci.binding(
             roles = "role/swarming.poolOwner",
             groups = "project-open-codecs-admins",
