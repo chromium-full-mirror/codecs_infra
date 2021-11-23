@@ -146,6 +146,9 @@ def GenTests(api):
       " ../../../libwebp/src/dsp/dec_sse2.c:605:5: runtime error: store to "
       "misaligned address 0x00000319e322 for type 'int32_t' (aka 'int'), which "
       "requires 4 byte alignment\n"
+      "/b/s/w/ir/x/w/recipe_cleanup/libwebm-tests-x86_64-ubsan/googletest/"
+      "googletest/src/gtest.cc:4082:33: runtime error: implicit conversion "
+      "signedness: 'const char' to 'unsigned char' [-Wsign-conversion]\n"
       " ../libvpx/vp9/encoder/x86/vp9_variance_sse2.c:32:42: runtime error: "
       "load of misaligned address 0x08aabe3a for type 'const uint32_t' (aka "
       "'const unsigned int'), which requires 4 byte alignment\n"
@@ -158,7 +161,7 @@ def GenTests(api):
       "basic_string.h:352:51: runtime error: unsigned integer overflow: 18 - 22"
       " cannot be represented in type 'unsigned long'")
 
-  fmt = {'parser': 'runtime errors', 'skips': 5}
+  fmt = {'parser': 'runtime errors', 'skips': 6}
   runtime_parser = {'name': 'runtime errors', 'threshold': 0}
   yield (api.test('Exclude all logs matching exclude_filter') +
          api.properties(logs=exclude_logs) +

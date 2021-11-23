@@ -157,6 +157,8 @@ class ScriptWrapperApi(recipe_api.RecipeApi):
       return True
     elif 'third_party/' in filename:
       return True
+    elif 'googletest/' in filename:
+      return True
     elif 'bits/ios_base.h' in filename and re.match(
         r'.*load of value.*std::_Ios_Fmtflags.*', message):
       return True
