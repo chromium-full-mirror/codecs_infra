@@ -25,6 +25,7 @@ load("//lib/try_helper.star", "try_helper")
 # Libwebm compile configuration matrix.
 _LIBWEBM_COMPILE_BUILD_TYPES = ["static", "static-debug"]
 _LIBWEBM_COMPILE_TARGETS = {
+    "i686-linux-clang": "clang-i686",
     "i686-w64-mingw32": "i686-w64-mingw32",
     "x86_64-linux-clang": "native-clang",
     "x86_64-linux-gnu": "native",
