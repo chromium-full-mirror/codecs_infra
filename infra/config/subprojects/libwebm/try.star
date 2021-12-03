@@ -32,6 +32,9 @@ _LIBWEBM_COMPILE_TARGETS = {
     "x86_64-linux-gnu-make": "native-Makefile.unix",
     "x86_64-w64-mingw32": "x86_64-w64-mingw32",
 }
+_LIBWEBM_COMPILE_EXCLUDED = [
+    "compile-x86_64-linux-gnu-make-debug",
+]
 
 # Libwebm builder cipd dependencies.
 _LIBWEBM_CIPD_PACKAGES = [
@@ -57,6 +60,7 @@ def _libwebm_compile_builder(
         script_name,
         build_types = [],
         compile_targets = {},
+        excluded_builders = [],
         properties = {},
         **kwargs):
     """Defines Libwebm compiler builds
@@ -66,6 +70,7 @@ def _libwebm_compile_builder(
       script_name: compilation script
       build_types: compilation script build type list
       compile_targets: host platform to cross-compile map
+      excluded_builders: filter list to remove builder from lucicfg
       properties: builder's input properties
       **kwargs: other keywords args
     """
@@ -74,6 +79,10 @@ def _libwebm_compile_builder(
         for host, target in compile_targets.items():
             build_type = "-debug" if "debug" in config else ""
             builder_name = "%s-%s%s" % (name, host, build_type)
+
+            if builder_name in excluded_builders:
+                continue
+
             overridden_properties = {
                 "script_name": script_name,
                 "script_arg": [config, target],
@@ -146,6 +155,7 @@ libwebm_try_builder(
     script_name = "compile.sh",
     build_types = _LIBWEBM_COMPILE_BUILD_TYPES,
     compile_targets = _LIBWEBM_COMPILE_TARGETS,
+    excluded_builders = _LIBWEBM_COMPILE_EXCLUDED,
     recipe = "run_infra_script",
 )
 
