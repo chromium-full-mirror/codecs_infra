@@ -27,7 +27,6 @@ load(
     "CI_BUILDER_ACCOUNT",
     "RECIPE_BUNDLE",
     "RECIPE_VERSION",
-    "common_helper",
 )
 
 def _create_ci_builder(
@@ -41,8 +40,7 @@ def _create_ci_builder(
         caches = [],
         category,
         triggered_by,
-        execution_timeout = 45 * time.minute,
-        **kwargs):
+        execution_timeout = 45 * time.minute):
     """Defines a post-submit builder.
 
     Args:
@@ -57,7 +55,6 @@ def _create_ci_builder(
       triggered_by: agent triggering the build (i.e. git poller, another
           builder)
       execution_timeout: timeout for the builder
-      **kwargs: injected keywords
     """
 
     builder_name = "%s-%s" % (prefix, name)
@@ -92,7 +89,6 @@ def _setup_builder(
         refs,
         *,
         category = "Linux|18",
-        cipd_packages = [],
         cpu_arch = "x86-64",
         email_list = None,
         os = "Ubuntu"):
@@ -103,7 +99,6 @@ def _setup_builder(
       repo: repo which git poller is watching
       refs: refs which git poller is watching
       category: console view category
-      cipd_packages: list of packages for cipd ensure -ensure-file
       cpu_arch: cpu architecture (e.g. x86-64)
       email_list: notify to this list of emails when ci builder fails.
       os: operating system this builder works with
@@ -142,27 +137,21 @@ def _setup_builder(
             name,
             builder_creator = _create_ci_builder,
             schedule = None,
-            properties = {},
-            **kwargs):
+            properties = {}):
         """Enclosed build function.
+
         Args:
             name: name suffix for builders created
             builder_creator: ci builder callback
             schedule: crontab expression (UTC), when the builder should be
                 triggered
             properties: input properties
-            **kwargs: args injected to builder_creator
         """
         dimensions = {
             "os": os,
             "cpu": cpu_arch,
             "pool": "luci.open-codecs.ci",
         }
-
-        input_properties = common_helper.set_input_properties(
-            properties = properties,
-            **kwargs
-        )
 
         # https://chromium.googlesource.com/infra/luci/luci-go/+/refs/heads/main/lucicfg/doc/README.md#schedules_doc
         if schedule:
@@ -188,7 +177,6 @@ def _setup_builder(
             properties = properties,
             triggered_by = triggered_by,
             schedule = schedule,
-            **kwargs
         )
 
     return build

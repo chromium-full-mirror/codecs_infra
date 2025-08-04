@@ -27,7 +27,6 @@ load(
     "RECIPE_BUNDLE",
     "RECIPE_VERSION",
     "TRY_BUILDER_ACCOUNT",
-    "common_helper",
 )
 
 def _patch_check_builder(
@@ -36,8 +35,7 @@ def _patch_check_builder(
         name,
         cq_group,
         dimensions,
-        execution_timeout = 10 * time.minute,
-        **kwargs):
+        execution_timeout = 10 * time.minute):
     """Define Patch Check builder
 
     Args:
@@ -46,7 +44,6 @@ def _patch_check_builder(
       cq_group: cq_group which the builder will be verified with
       dimensions: dict with os, cpu architecture, and other vm settings
       execution_timeout: timeout for the builder
-      **kwargs: injected keywords
     """
 
     builder_name = "%s-%s" % (prefix, name)
@@ -91,8 +88,7 @@ def _create_try_builder(
         dimensions,
         properties = {},
         caches = [],
-        execution_timeout = 45 * time.minute,
-        **kwargs):
+        execution_timeout = 45 * time.minute):
     """Defines a pre-submit builder.
 
     Args:
@@ -104,7 +100,6 @@ def _create_try_builder(
       properties: recipe's input properties
       caches: list of caches
       execution_timeout: timeout for the builder
-      **kwargs: injected keywords
     """
     builder_name = "%s-%s" % (prefix, name)
 
@@ -141,7 +136,6 @@ def _setup_builder(
         refs,
         *,
         category = "Linux|18",
-        cipd_packages = [],
         cpu_arch = "x86-64",
         execution_timeout = 45 * time.minute,
         os = "Ubuntu"):
@@ -152,7 +146,6 @@ def _setup_builder(
       repo: repo which cq_group is watching
       refs: refs which cq_group is watching
       category: console view category
-      cipd_packages: list of packages for cipd ensure -ensure-file
       cpu_arch: cpu architecture (e.g. x86-64)
       execution_timeout: timeout for the builder
       os: operating system this builder works with
@@ -167,19 +160,12 @@ def _setup_builder(
             *,
             name,
             builder_creator = _create_try_builder,
-            properties = {},
-            **kwargs):
+            properties = {}):
         dimensions = {
             "os": os,
             "cpu": cpu_arch,
             "pool": "luci.open-codecs.try",
         }
-
-        input_properties = common_helper.set_input_properties(
-            properties = properties,
-            cipd_packages = cipd_packages,
-            **kwargs
-        )
 
         # Builder callback
         builder_creator(
@@ -191,7 +177,6 @@ def _setup_builder(
             caches = caches,
             execution_timeout = execution_timeout,
             properties = properties,
-            **kwargs
         )
 
     # The CQ group with all pre-submit builders, referenced below.

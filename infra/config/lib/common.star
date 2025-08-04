@@ -55,15 +55,14 @@ def _set_input_properties(
         *,
         cipd_packages = [],
         script_parsers = [],
-        properties = {},
-        **kwargs):
+        properties = {}):
     """Defines input properties.
 
     Args:
       properties: input properties
       cipd_packages: list of packages for cipd ensure -ensure-file
       script_parsers: list of script parser configurations
-      **kwargs: injected keywords
+    #   **kwargs: injected keywords
     """
     if cipd_packages:
         cipd_pkg_defs = [CODECS_CIPD_DEPS_MAPPING[k] for k in cipd_packages]
